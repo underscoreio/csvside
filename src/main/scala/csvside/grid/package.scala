@@ -1,3 +1,3 @@
 package csvside
 
-package object grid extends Types with core.CellFormats with Load
+package object grid extends Types with core.CellFormats with Read

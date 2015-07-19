@@ -6,17 +6,17 @@ import cats.std.all._
 import cats.syntax.traverse._
 import java.io.{File, Reader}
 
-trait Load {
+trait Read {
   self: Types =>
 
   def read[A](data: String)(implicit format: CellFormat[A]): CsvValidated[CsvGrid[A]] =
-    process(core.Load.read(data))
+    process(core.Read.read(data))
 
   def read[A](reader: Reader)(implicit format: CellFormat[A]): CsvValidated[CsvGrid[A]] =
-    process(core.Load.read(reader))
+    process(core.Read.read(reader))
 
-  def load[A](file: File)(implicit format: CellFormat[A]): CsvValidated[CsvGrid[A]] =
-    process(core.Load.load(file))
+  def read[A](file: File)(implicit format: CellFormat[A]): CsvValidated[CsvGrid[A]] =
+    process(core.Read.read(file))
 
   def process[A](csv: Seq[Seq[String]])(implicit format: CellFormat[A]): CsvValidated[CsvGrid[A]] = {
     val valPairs: Seq[CsvValidated[((CsvHead, CsvHead), A)]] = {

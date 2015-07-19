@@ -3,17 +3,17 @@ package list
 
 import java.io.{File, Reader}
 
-trait Load {
+trait Read {
   self: Types =>
 
-  def load[A](file: File)(implicit format: ColumnFormat[A]): Seq[CsvValidated[A]] =
-    process(core.Load.load(file))
+  def read[A](file: File)(implicit format: ColumnFormat[A]): Seq[CsvValidated[A]] =
+    process(core.Read.read(file))
 
   def read[A](reader: Reader)(implicit format: ColumnFormat[A]): Seq[CsvValidated[A]] =
-    process(core.Load.read(reader))
+    process(core.Read.read(reader))
 
   def read[A](data: String)(implicit format: ColumnFormat[A]): Seq[CsvValidated[A]] =
-    process(core.Load.read(data))
+    process(core.Read.read(data))
 
   def process[A](seq: Seq[Seq[String]])(implicit format: ColumnFormat[A]): Seq[CsvValidated[A]] = {
     val cols = seq.head

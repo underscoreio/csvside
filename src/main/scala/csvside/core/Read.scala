@@ -5,8 +5,8 @@ import java.io.{File, Reader, FileReader, StringReader}
 
 import scala.collection.JavaConversions._
 
-private[csvside] object Load {
-  def load(file: File): Seq[Seq[String]] = {
+private[csvside] object Read {
+  def read(file: File): Seq[Seq[String]] = {
     val reader = new FileReader(file)
     try read(reader) finally reader.close()
   }

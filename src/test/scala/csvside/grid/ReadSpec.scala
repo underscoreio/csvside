@@ -9,7 +9,7 @@ import org.scalatest._
 
 import unindent._
 
-class LoadSpec extends FreeSpec with Matchers {
+class ReadSpec extends FreeSpec with Matchers {
   "read(string)" - {
     "valid" in {
       val csv = i"""

@@ -9,7 +9,7 @@ import org.scalatest._
 
 import unindent._
 
-class LoadSpec extends FreeSpec with Matchers with LoadFixtures {
+class ReadSpec extends FreeSpec with Matchers with ReadFixtures {
   "read(string)" - {
     "valid" in {
       val csv = i"""
@@ -44,7 +44,7 @@ class LoadSpec extends FreeSpec with Matchers with LoadFixtures {
   }
 }
 
-trait LoadFixtures {
+trait ReadFixtures {
   case class Test(a: String, b: Int, c: Option[Boolean])
 
   implicit val testFormat: ColumnFormat[Test] = (

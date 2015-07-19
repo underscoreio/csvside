@@ -1,3 +1,3 @@
 package csvside
 
-package object list extends Types with ColumnFormats with Load
+package object list extends Types with ColumnFormats with Read
