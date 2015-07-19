@@ -2,7 +2,7 @@
 
 CSV readers and combinators for Scala. Made with Cats.
 
-Copyright 2014 Richard Dallaway and Dave Gurnell of Underscore.
+Copyright 2015 Richard Dallaway and Dave Gurnell of Underscore.
 
 ## Synopsis
 
