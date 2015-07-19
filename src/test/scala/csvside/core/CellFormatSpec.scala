@@ -1,4 +1,5 @@
 package csvside
+package core
 
 import cats.data.Validated
 import cats.data.Validated.{valid, invalid}
@@ -6,9 +7,9 @@ import cats.std.all._
 
 import org.scalatest._
 
-class CsvCellFormatSpec extends FreeSpec with Matchers {
+class CellFormatSpec extends FreeSpec with Matchers with Types with CellFormats {
   "stringFormat" - {
-    val format = implicitly[CsvCellFormat[String]]
+    val format = implicitly[CellFormat[String]]
 
     "valid" in {
       format("Hi") should equal(valid("Hi"))
@@ -16,7 +17,7 @@ class CsvCellFormatSpec extends FreeSpec with Matchers {
   }
 
   "intFormat" - {
-    val format = implicitly[CsvCellFormat[Int]]
+    val format = implicitly[CellFormat[Int]]
 
     "valid" in {
       format("123") should equal(valid(123))
@@ -29,7 +30,7 @@ class CsvCellFormatSpec extends FreeSpec with Matchers {
   }
 
   "doubleFormat" - {
-    val format = implicitly[CsvCellFormat[Double]]
+    val format = implicitly[CellFormat[Double]]
 
     "valid" in {
       format("123") should equal(valid(123.0))
@@ -41,7 +42,7 @@ class CsvCellFormatSpec extends FreeSpec with Matchers {
   }
 
   "optionFormat" - {
-    val format = implicitly[CsvCellFormat[Option[Int]]]
+    val format = implicitly[CellFormat[Option[Int]]]
 
     "present and valid" - {
       format("123") should equal(valid(Some(123)))

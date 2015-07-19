@@ -1,13 +1,14 @@
 package csvside
+package core
 
 import cats.data.Validated
 
-trait CsvTypes {
+trait Types {
   type CsvHead = String
   type CsvCell = String
   type CsvError = String
 
   type CsvValidated[+A] = Validated[List[CsvError], A]
 
-  type CsvCellFormat[+A] = CsvCell => CsvValidated[A]
+  type CellFormat[+A] = CsvCell => CsvValidated[A]
 }

@@ -32,3 +32,11 @@ libraryDependencies ++= Seq(
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
+
+// Unindent:
+
+resolvers += "Awesome Utilities" at "https://dl.bintray.com/davegurnell/maven"
+
+libraryDependencies ++= Seq(
+  "com.davegurnell" %% "unindent" % "1.0"
+)

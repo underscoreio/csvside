@@ -1,15 +1,16 @@
 package csvside
+package core
 
 import cats.data.Validated
 import cats.data.Validated.{invalid, valid}
 
-trait CsvCellFormats {
-  self: CsvTypes =>
+trait CellFormats {
+  self: Types =>
 
-  implicit val stringFormat: CsvCellFormat[String] =
+  implicit val stringFormat: CellFormat[String] =
     cell => valid(cell)
 
-  implicit val intFormat: CsvCellFormat[Int] =
+  implicit val intFormat: CellFormat[Int] =
     cell => try {
       valid(cell.toInt)
     } catch {
@@ -17,7 +18,7 @@ trait CsvCellFormats {
         invalid(List("Must be a whole number"))
     }
 
-  implicit val doubleFormat: CsvCellFormat[Double] =
+  implicit val doubleFormat: CellFormat[Double] =
     cell => try {
       valid(cell.toDouble)
     } catch {
@@ -25,7 +26,7 @@ trait CsvCellFormats {
         invalid(List("Must be a number"))
     }
 
-  implicit val booleanFormat: CsvCellFormat[Boolean] =
+  implicit val booleanFormat: CellFormat[Boolean] =
     cell => cell.toLowerCase match {
       case "true" => valid(true)
       case "false" => valid(false)
@@ -40,7 +41,7 @@ trait CsvCellFormats {
       case _ => invalid(List("Must be a yes/no value"))
     }
 
-  implicit def optionFormat[A](implicit format: CsvCellFormat[A]): CsvCellFormat[Option[A]] = {
+  implicit def optionFormat[A](implicit format: CellFormat[A]): CellFormat[Option[A]] = {
     def suffix(errors: List[CsvError]): List[CsvError] =
       errors.map(_ + " or blank")
 

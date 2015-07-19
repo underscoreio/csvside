@@ -6,25 +6,28 @@ import cats.data.Validated
 import cats.data.Validated.{valid, invalid}
 import cats.std.all._
 import cats.syntax.apply._
+import core.CellFormats
 
-trait CsvListFormats {
+trait ColumnFormats extends CellFormats {
+  self: Types =>
+
   implicit class CsvListHeadOps(head: CsvHead) {
     def prefix(errors: List[CsvError]): List[CsvError] =
       errors.map(head + ": " + _)
 
-    def as[A](implicit format: CsvCellFormat[A]): CsvListFormat[A] =
+    def as[A](implicit format: CellFormat[A]): ColumnFormat[A] =
       row => row.get(head) match {
         case Some(cell) => format(cell).bimap(prefix, identity)
-        case None => invalid(List(s"Column not found: $head"))
+        case None => invalid(List(s"$head: Column was empty"))
       }
   }
 
-  implicit val csvListFormatApply: Apply[CsvListFormat] =
-    new Apply[CsvListFormat] {
-      def map[A, B](fa: CsvListFormat[A])(f: A => B): CsvListFormat[B] =
+  implicit val csvListFormatApply: Apply[ColumnFormat] =
+    new Apply[ColumnFormat] {
+      def map[A, B](fa: ColumnFormat[A])(f: A => B): ColumnFormat[B] =
         row => fa(row).map(f)
 
-      def ap[A, B](fa: CsvListFormat[A])(f: CsvListFormat[A => B]): CsvListFormat[B] =
+      def ap[A, B](fa: ColumnFormat[A])(f: ColumnFormat[A => B]): ColumnFormat[B] =
         row => {
           val a: CsvValidated[A] = fa(row)
           val b: CsvValidated[A => B] = f(row)

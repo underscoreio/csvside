@@ -7,7 +7,7 @@ import cats.syntax.apply._
 
 import org.scalatest._
 
-class CsvListFormatSpec extends FreeSpec with Matchers {
+class ColumnFormatSpec extends FreeSpec with Matchers {
   val validRow = Map(
     "Column 1" -> "abc",
     "Column 2" -> "123",
@@ -36,7 +36,7 @@ class CsvListFormatSpec extends FreeSpec with Matchers {
 
   case class Test(a: String, b: Int, c: Boolean, d: Option[Double])
 
-  val testFormat: CsvListFormat[Test] = (
+  val testFormat: ColumnFormat[Test] = (
     "Column 1".as[String] |@|
     "Column 2".as[Int] |@|
     "Column 3".as[Boolean] |@|

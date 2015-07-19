@@ -1,0 +1,5 @@
+Str,Bool,Int
+abc,true,123
+"a b",false,321
+,,
+abc,abc,abc
