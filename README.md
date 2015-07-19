@@ -2,7 +2,7 @@
 
 CSV readers and combinators for Scala. Made with Cats.
 
-Copyright 2015 Richard Dallaway and Dave Gurnell of Underscore.
+Copyright 2015 Richard Dallaway and Dave Gurnell. Licensed [Apache 2][license].
 
 ## Synopsis
 
@@ -82,3 +82,22 @@ val ans = read[Option[Boolean]](csv)
 //     ("C", "3") -> Some(true)
 //   )
 ~~~
+
+## Getting Started
+
+Grab the code from Bintray by adding the following to your `build.sbt`:
+
+~~~ scala
+scalaVersion := "2.11.6"
+
+resolvers += "Awesome Utilities" at "https://dl.bintray.com/davegurnell/maven"
+
+libraryDependencies += "io.underscore" %% "csvside" % "0.1"
+~~~
+
+The import one of the following and proceed as above:
+
+ - `csvside.list._` for list-formatted files;
+ - `csvside.grid._` for grid-formatted files.
+
+[license]: http://www.apache.org/licenses/LICENSE-2.0

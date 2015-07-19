@@ -40,3 +40,11 @@ resolvers += "Awesome Utilities" at "https://dl.bintray.com/davegurnell/maven"
 libraryDependencies ++= Seq(
   "com.davegurnell" %% "unindent" % "1.0"
 )
+
+// Bintray:
+
+licenses += ("Apache-2.0", url("http://apache.org/licenses/LICENSE-2.0"))
+
+bintrayPackageLabels in bintray := Seq("scala", "csv", "utility")
+
+bintrayRepository in bintray := "maven"
