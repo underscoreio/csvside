@@ -1,8 +1,6 @@
 package csvside
-package list
 
 import cats.data.Validated.{valid, invalid}
-import csvside.core._
 
 trait ListFormat[A] extends (List[CsvHead] => CsvValidated[ColumnFormat[A]])
 

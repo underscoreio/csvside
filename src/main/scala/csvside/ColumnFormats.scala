@@ -1,11 +1,9 @@
 package csvside
-package list
 
 import cats.Applicative
 import cats.data.Validated.{valid, invalid}
 import cats.std.all._
 import cats.syntax.traverse._
-import csvside.core._
 
 trait ColumnFormats extends CellFormats {
   implicit class CsvHeadOps(head: CsvHead) {

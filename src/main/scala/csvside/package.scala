@@ -1,8 +1,6 @@
-package csvside
-
 import cats.data.Validated
 
-package object core {
+package object csvside extends ColumnFormats with Read {
   type CsvHead = String
   type CsvCell = String
   type CsvError = String

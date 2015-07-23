@@ -14,7 +14,7 @@ Here's an example that reads directly from a `String`.
 You can also read from a `java.io.File` or a `java.io.Reader`:
 
 ~~~ scala
-import csvside.list._
+import csvside._
 
 // We want to parse this CSV...
 val csv = """
@@ -58,7 +58,7 @@ If the format of the rows depends on the values in the header row,
 we can use a `ListFormat[A]` to generate a `ColumnFormat[A]` on the fly:
 
 ~~~ scala
-import csvside.list._
+import csvside._
 
 // We want to parse the cells in this CSV...
 val csv = i"""

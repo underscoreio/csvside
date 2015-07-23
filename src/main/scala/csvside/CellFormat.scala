@@ -1,5 +1,4 @@
 package csvside
-package core
 
 trait CellFormat[+A] extends (CsvCell => CsvValidated[A])
 

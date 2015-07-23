@@ -1,11 +1,9 @@
 package csvside
-package list
 
 import cats.Applicative
 import cats.data.Validated.{valid, invalid}
 import cats.std.all._
 import cats.syntax.apply._
-import csvside.core._
 
 trait ColumnFormat[A] extends (Map[CsvHead, CsvCell] => CsvValidated[A]) {
   def map[B](func: A => B): ColumnFormat[B] =
