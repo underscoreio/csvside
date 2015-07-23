@@ -1,5 +1,4 @@
 package csvside
-package core
 
 import cats.data.Validated
 import cats.data.Validated.{valid, invalid}
@@ -7,7 +6,7 @@ import cats.std.all._
 
 import org.scalatest._
 
-class CellFormatSpec extends FreeSpec with Matchers with Types with CellFormats {
+class CellFormatSpec extends FreeSpec with Matchers with CellFormats {
   "stringFormat" - {
     val format = implicitly[CellFormat[String]]
 

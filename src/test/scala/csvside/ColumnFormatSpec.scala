@@ -1,5 +1,4 @@
 package csvside
-package list
 
 import cats.data.Validated
 import cats.data.Validated.{valid, invalid}
