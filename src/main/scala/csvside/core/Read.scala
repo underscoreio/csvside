@@ -6,22 +6,22 @@ import java.io.{File, Reader, FileReader, StringReader}
 import scala.collection.JavaConversions._
 
 private[csvside] object Read {
-  def read(file: File): Seq[Seq[String]] = {
+  def read(file: File): Seq[List[String]] = {
     val reader = new FileReader(file)
     try read(reader) finally reader.close()
   }
 
-  def read(in: String): Seq[Seq[String]] =
+  def read(in: String): Seq[List[String]] =
     read(new StringReader(in))
 
-  def read(reader: Reader): Seq[Seq[String]] = {
+  def read(reader: Reader): Seq[List[String]] = {
     val csv = new com.opencsv.CSVReader(reader)
 
-    def stream: Stream[Array[String]] = {
+    def stream: Stream[List[String]] = {
       val next = csv.readNext()
-      if (next == null) Stream.Empty else next #:: stream
+      if (next == null) Stream.Empty else next.toList #:: stream
     }
 
-    stream.map(_.toSeq)
+    stream
   }
 }

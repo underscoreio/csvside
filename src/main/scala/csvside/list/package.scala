@@ -1,3 +1,5 @@
 package csvside
 
-package object list extends Types with ColumnFormats with Read
+import csvside.core._
+
+package object list extends ColumnFormats with Read
