@@ -52,7 +52,7 @@ val ans = read[Test](csv)
 //   )
 ~~~
 
-### Row Format Depends on Columns
+### Row Format Depends on Header Row
 
 If the format of the rows depends on the values in the header row,
 we can use a `ListFormat[A]` to generate a `ColumnFormat[A]` on the fly:
