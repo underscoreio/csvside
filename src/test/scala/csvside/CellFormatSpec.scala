@@ -55,4 +55,17 @@ class CellFormatSpec extends FreeSpec with Matchers with CellFormats {
       format("") should equal(valid(None))
     }
   }
+
+  "cellFormat.map" - {
+    case class Id(value: Int)
+    val format = implicitly[CellFormat[Int]].map(Id(_))
+
+    "valid" in {
+      format("123") should be(valid(Id(123)))
+    }
+
+    "invalid" in {
+      format("abc") should be(invalid(List("Must be a whole number")))
+    }
+  }
 }
