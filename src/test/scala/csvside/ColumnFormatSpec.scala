@@ -42,6 +42,15 @@ class ColumnFormatSpec extends FreeSpec with Matchers {
     "Column 4".as[Option[Double]]
   ) map (Test.apply)
 
+  "constant[A]" - {
+    val data   = new Exception("WOO!")
+    val format = constant[Exception](data)
+
+    "valid" in {
+      format(emptyRow) should equal(valid(data))
+    }
+  }
+
   "as[A]" - {
     "valid" in {
       format1(validRow) should equal(valid("abc"))

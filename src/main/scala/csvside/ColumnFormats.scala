@@ -6,6 +6,11 @@ import cats.std.all._
 import cats.syntax.traverse._
 
 trait ColumnFormats extends CellFormats {
+  def constant[A](value: A): ColumnFormat[A] =
+    ColumnFormat[A] { row =>
+      valid(value)
+    }
+
   implicit class CsvHeadOps(head: CsvHead) {
     def prefix(errors: List[CsvError]): List[CsvError] =
       errors.map(head + ": " + _)
