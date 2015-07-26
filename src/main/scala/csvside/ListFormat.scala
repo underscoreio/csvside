@@ -11,6 +11,6 @@ object ListFormat {
         func(csv)
     }
 
-  implicit def columnFormatToListFormat[A](implicit columnFormat: ColumnFormat[A]): ListFormat[A] =
+  implicit def fromColumnFormat[A](implicit columnFormat: ColumnFormat[A]): ListFormat[A] =
     ListFormat[A](_ => valid(columnFormat))
 }
