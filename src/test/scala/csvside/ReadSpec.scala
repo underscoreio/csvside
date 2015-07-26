@@ -33,11 +33,11 @@ class ReadSpec extends FreeSpec with Matchers {
 
         read[Test](csv) should equal(Seq(
           invalid(Seq(
-            "Int: Must be a whole number"
+            "Line 2: Int: Must be a whole number"
           )),
           invalid(Seq(
-            "Int: Must be a whole number",
-            "Bool: Must be a yes/no value or blank"
+            "Line 3: Int: Must be a whole number",
+            "Line 3: Bool: Must be a yes/no value or blank"
           ))
         ))
       }
@@ -65,7 +65,7 @@ class ReadSpec extends FreeSpec with Matchers {
           """
 
         read[Test](csv) should equal(Seq(
-          invalid(List(s"Bad header row: Badness, A, B, C"))
+          invalid(List(s"Line 1: Bad header row: Badness, A, B, C"))
         ))
       }
 
@@ -78,11 +78,11 @@ class ReadSpec extends FreeSpec with Matchers {
 
         read[Test](csv) should equal(Seq(
           invalid(Seq(
-            "A: Must be a whole number or blank"
+            "Line 2: A: Must be a whole number or blank"
           )),
           invalid(Seq(
-            "B: Must be a whole number or blank",
-            "C: Must be a whole number or blank"
+            "Line 3: B: Must be a whole number or blank",
+            "Line 3: C: Must be a whole number or blank"
           ))
         ))
       }
