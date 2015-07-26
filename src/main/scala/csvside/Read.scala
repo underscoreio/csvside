@@ -18,8 +18,14 @@ trait Read extends ReadRaw {
     val cols = seq.head
 
     listFormat(cols).fold(
-      errors => Seq(invalid(errors)),
-      format => seq.tail.map(cells => format((cols zip cells).toMap))
+      errors => Seq(invalid(errors.map("Line 1: " + _))),
+      format => seq.tail.zipWithIndex map {
+        case (cells, index) =>
+          format((cols zip cells).toMap).fold(
+            errors => invalid(errors.map(s"Line ${index + 2}: " + _)),
+            result => valid(result)
+          )
+      }
     )
   }
 }
