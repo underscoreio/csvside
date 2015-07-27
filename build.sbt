@@ -38,7 +38,7 @@ libraryDependencies ++= Seq(
 resolvers += "Awesome Utilities" at "https://dl.bintray.com/davegurnell/maven"
 
 libraryDependencies ++= Seq(
-  "com.davegurnell" %% "unindent" % "1.0"
+  "com.davegurnell" %% "unindent" % "1.0.0"
 )
 
 // Bintray:
