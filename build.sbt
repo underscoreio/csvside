@@ -2,7 +2,7 @@ name := "csvside"
 
 organization := "io.underscore"
 
-version := "0.6.0"
+version := "0.6.1"
 
 scalaVersion := "2.11.7"
 
@@ -38,7 +38,7 @@ libraryDependencies ++= Seq(
 resolvers += "Awesome Utilities" at "https://dl.bintray.com/davegurnell/maven"
 
 libraryDependencies ++= Seq(
-  "com.davegurnell" %% "unindent" % "1.0"
+  "com.davegurnell" %% "unindent" % "1.0.0"
 )
 
 // Bintray:
