@@ -7,26 +7,26 @@ import cats.syntax.apply._
 import org.scalatest._
 
 class ColumnFormatSpec extends FreeSpec with Matchers {
-  val validRow = Map(
+  val validRow = CsvRow(1, Map(
     "Column 1" -> "abc",
     "Column 2" -> "123",
     "Column 3" -> "yes",
     "Column 4" -> ""
-  )
+  ))
 
-  val invalidRow = Map(
+  val invalidRow = CsvRow(2, Map(
     "Column 1" -> "abc",
     "Column 2" -> "abc",
     "Column 3" -> "abc",
     "Column 4" -> "abc"
-  )
+  ))
 
-  val emptyRow = Map(
+  val emptyRow = CsvRow(3, Map(
     "Column 1" -> "",
     "Column 2" -> "",
     "Column 3" -> "",
     "Column 4" -> ""
-  )
+  ))
 
   val format1 = "Column 1".as[String]
   val format2 = "Column 2".as[Int]
@@ -61,15 +61,15 @@ class ColumnFormatSpec extends FreeSpec with Matchers {
 
     "invalid" in {
       format1(invalidRow) should equal(valid("abc"))
-      format2(invalidRow) should equal(invalid(List("Column 2: Must be a whole number")))
-      format3(invalidRow) should equal(invalid(List("Column 3: Must be a yes/no value")))
-      format4(invalidRow) should equal(invalid(List("Column 4: Must be a number or blank")))
+      format2(invalidRow) should equal(invalid(List(CsvError(2, "Column 2", "Must be a whole number"))))
+      format3(invalidRow) should equal(invalid(List(CsvError(2, "Column 3", "Must be a yes/no value"))))
+      format4(invalidRow) should equal(invalid(List(CsvError(2, "Column 4", "Must be a number or blank"))))
     }
 
     "empty" in {
       format1(emptyRow) should equal(valid(""))
-      format2(emptyRow) should equal(invalid(List("Column 2: Must be a whole number")))
-      format3(emptyRow) should equal(invalid(List("Column 3: Must be a yes/no value")))
+      format2(emptyRow) should equal(invalid(List(CsvError(3, "Column 2", "Must be a whole number"))))
+      format3(emptyRow) should equal(invalid(List(CsvError(3, "Column 3", "Must be a yes/no value"))))
       format4(emptyRow) should equal(valid(None))
     }
   }
@@ -86,16 +86,16 @@ class ColumnFormatSpec extends FreeSpec with Matchers {
 
     "invalid" in {
       testFormat(invalidRow) should equal(invalid(List(
-        "Column 2: Must be a whole number",
-        "Column 3: Must be a yes/no value",
-        "Column 4: Must be a number or blank"
+        CsvError(2, "Column 2", "Must be a whole number"),
+        CsvError(2, "Column 3", "Must be a yes/no value"),
+        CsvError(2, "Column 4", "Must be a number or blank")
       )))
     }
 
     "empty" in {
       testFormat(emptyRow) should equal(invalid(List(
-        "Column 2: Must be a whole number",
-        "Column 3: Must be a yes/no value"
+        CsvError(3, "Column 2", "Must be a whole number"),
+        CsvError(3, "Column 3", "Must be a yes/no value")
       )))
     }
   }

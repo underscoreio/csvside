@@ -11,7 +11,7 @@ class CellFormatSpec extends FreeSpec with Matchers with CellFormats {
     val format = implicitly[CellFormat[String]]
 
     "valid" in {
-      format("Hi") should equal(valid("Hi"))
+      format(CsvCell(1, "Col", "Hi")) should equal(valid("Hi"))
     }
   }
 
@@ -19,12 +19,12 @@ class CellFormatSpec extends FreeSpec with Matchers with CellFormats {
     val format = implicitly[CellFormat[Int]]
 
     "valid" in {
-      format("123") should equal(valid(123))
+      format(CsvCell(1, "Col", "123")) should equal(valid(123))
     }
 
     "invalid" in {
-      format("123.4") should equal(invalid(List("Must be a whole number")))
-      format("abc") should equal(invalid(List("Must be a whole number")))
+      format(CsvCell(1, "Col", "123.4")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
+      format(CsvCell(1, "Col", "abc")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
     }
   }
 
@@ -32,11 +32,11 @@ class CellFormatSpec extends FreeSpec with Matchers with CellFormats {
     val format = implicitly[CellFormat[Double]]
 
     "valid" in {
-      format("123") should equal(valid(123.0))
+      format(CsvCell(1, "Col", "123")) should equal(valid(123.0))
     }
 
     "invalid" in {
-      format("abc") should equal(invalid(List("Must be a number")))
+      format(CsvCell(1, "Col", "abc")) should equal(invalid(List(CsvError(1, "Col", "Must be a number"))))
     }
   }
 
@@ -44,15 +44,15 @@ class CellFormatSpec extends FreeSpec with Matchers with CellFormats {
     val format = implicitly[CellFormat[Option[Int]]]
 
     "present and valid" - {
-      format("123") should equal(valid(Some(123)))
+      format(CsvCell(1, "Col", "123")) should equal(valid(Some(123)))
     }
 
     "present and invalid" - {
-      format("abc") should equal(invalid(List("Must be a whole number or blank")))
+      format(CsvCell(1, "Col", "abc")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number or blank"))))
     }
 
     "absent" - {
-      format("") should equal(valid(None))
+      format(CsvCell(1, "Col", "") )should equal(valid(None))
     }
   }
 
@@ -61,11 +61,11 @@ class CellFormatSpec extends FreeSpec with Matchers with CellFormats {
     val format = implicitly[CellFormat[Int]].map(Id(_))
 
     "valid" in {
-      format("123") should be(valid(Id(123)))
+      format(CsvCell(1, "Col", "123")) should be(valid(Id(123)))
     }
 
     "invalid" in {
-      format("abc") should be(invalid(List("Must be a whole number")))
+      format(CsvCell(1, "Col", "abc")) should be(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
     }
   }
 }

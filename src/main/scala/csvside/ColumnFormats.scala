@@ -12,18 +12,18 @@ trait ColumnFormats extends CellFormats {
     }
 
   implicit class CsvHeadOps(head: CsvHead) {
-    def prefix(errors: List[CsvError]): List[CsvError] =
-      errors.map(head + ": " + _)
+    // def prefix(errors: List[CsvError]): List[CsvError] =
+    //   errors.map(_.prefix(head + ": "))
 
     def as[A](implicit format: CellFormat[A]): ColumnFormat[A] =
       ColumnFormat[A] { row =>
         row.get(head) match {
-          case Some(cell) => format(cell).bimap(prefix, identity)
-          case None => invalid(List(s"$head: Column was empty"))
+          case Some(cell) => format(cell)//.bimap(prefix, identity)
+          case None => invalid(List(row.error(head, s"$head: Column was empty")))
         }
       }
 
-    def asPair[A](implicit format: CellFormat[A]): ColumnFormat[(String, A)] =
+    def asPair[A](implicit format: CellFormat[A]): ColumnFormat[(CsvHead, A)] =
       as[A].map(value => head -> value)
   }
 
