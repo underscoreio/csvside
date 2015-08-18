@@ -5,15 +5,15 @@ import cats.data.Validated.{valid, invalid}
 import cats.std.all._
 import cats.syntax.apply._
 
-trait ColumnFormat[A] extends (Map[CsvHead, CsvCell] => CsvValidated[A]) {
+trait ColumnFormat[A] extends (CsvRow => CsvValidated[A]) {
   def map[B](func: A => B): ColumnFormat[B] =
     ColumnFormat[B](this(_).map(func))
 }
 
 object ColumnFormat {
-  def apply[A](func: Map[CsvHead, CsvCell] => CsvValidated[A]): ColumnFormat[A] =
+  def apply[A](func: CsvRow => CsvValidated[A]): ColumnFormat[A] =
     new ColumnFormat[A] {
-      def apply(row: Map[CsvHead, CsvCell]): CsvValidated[A] =
+      def apply(row: CsvRow): CsvValidated[A] =
         func(row)
     }
 

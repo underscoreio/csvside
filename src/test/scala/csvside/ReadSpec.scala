@@ -33,11 +33,11 @@ class ReadSpec extends FreeSpec with Matchers {
 
         read[Test](csv) should equal(Seq(
           invalid(Seq(
-            "Line 2: Int: Must be a whole number"
+            CsvError(2, "Int", "Must be a whole number")
           )),
           invalid(Seq(
-            "Line 3: Int: Must be a whole number",
-            "Line 3: Bool: Must be a yes/no value or blank"
+            CsvError(3, "Int", "Must be a whole number"),
+            CsvError(3, "Bool", "Must be a yes/no value or blank")
           ))
         ))
       }
@@ -65,7 +65,7 @@ class ReadSpec extends FreeSpec with Matchers {
           """
 
         read[Test](csv) should equal(Seq(
-          invalid(List(s"Line 1: Bad header row: Badness, A, B, C"))
+          invalid(List(CsvError(1, "", s"Bad header row: Badness, A, B, C")))
         ))
       }
 
@@ -78,11 +78,11 @@ class ReadSpec extends FreeSpec with Matchers {
 
         read[Test](csv) should equal(Seq(
           invalid(Seq(
-            "Line 2: A: Must be a whole number or blank"
+            CsvError(2, "A", "Must be a whole number or blank")
           )),
           invalid(Seq(
-            "Line 3: B: Must be a whole number or blank",
-            "Line 3: C: Must be a whole number or blank"
+            CsvError(3, "B", "Must be a whole number or blank"),
+            CsvError(3, "C", "Must be a whole number or blank")
           ))
         ))
       }
@@ -109,6 +109,6 @@ trait ListFormatFixtures {
         valid(("Key".as[String] |@| tail.asMap[Option[Int]]) map (Test.apply))
 
       case cells =>
-        invalid(List(s"Bad header row: ${cells.mkString(", ")}"))
+        invalid(List(CsvError(1, "", s"Bad header row: ${cells.mkString(", ")}")))
     }
 }

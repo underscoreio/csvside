@@ -44,10 +44,12 @@ val ans = read[Test](csv)
 //   Stream(
 //     Valid(Test("abc",123,Some(true))),
 //     Valid(Test("a b",321,Some(false))),
-//     Invalid(List("Int: Must be a whole number")),
 //     Invalid(List(
-//       "Int: Must be a whole number",
-//       "Bool: Must be a yes/no value or blank"
+//       CsvError(3, "Int", "Must be a whole number")
+//     )),
+//     Invalid(List(
+//       CsvError(4, "Int", "Must be a whole number"),
+//       CsvError(4, "Bool", "Must be a yes/no value or blank")
 //     ))
 //   )
 ~~~
@@ -83,7 +85,7 @@ implicit val testFormat: ListFormat[Test] = {
       valid((head.as[String] |@| tail.asMap[Option[Int]]) map (Test.apply))
 
     case Nil =>
-      invalid(List("CSV file must contain at least one column"))
+      invalid(List(CsvError(1, "", "CSV file must contain at least one column")))
   }
 }
 
@@ -104,7 +106,7 @@ scalaVersion := "2.11.6"
 
 resolvers += "Awesome Utilities" at "https://dl.bintray.com/davegurnell/maven"
 
-libraryDependencies += "io.underscore" %% "csvside" % "0.1"
+libraryDependencies += "io.underscore" %% "csvside" % "0.7.0"
 ~~~
 
 The import one of the following and proceed as above:
