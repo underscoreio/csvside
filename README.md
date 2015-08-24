@@ -8,7 +8,7 @@ Copyright 2015 Richard Dallaway and Dave Gurnell. Licensed [Apache 2][license].
 
 CSVSide lets you read list-formatted and grid-formatted CSV files as follows.
 
-### Fixed Row Format
+### Fixed Row Reader
 
 Here's an example that reads directly from a `String`.
 You can also read from a `java.io.File` or a `java.io.Reader`:
@@ -28,8 +28,8 @@ val csv = """
 // To a sequence of this data structure...
 case class Test(str: String, num: Int, bool: Option[Boolean])
 
-// We define a ColumnFormat...
-implicit val testFormat: ColumnFormat[Test] = {
+// We define a ColumnReader...
+implicit val testReader: ColumnReader[Test] = {
   import cats.syntax.apply._
   (
     "Str".as[String] |@|
@@ -54,10 +54,10 @@ val ans = read[Test](csv)
 //   )
 ~~~
 
-### Row Format Depends on Header Row
+### Row Reader Depends on Header Row
 
 If the format of the rows depends on the values in the header row,
-we can use a `ListFormat[A]` to generate a `ColumnFormat[A]` on the fly:
+we can use a `ListReader[A]` to generate a `ColumnReader[A]` on the fly:
 
 ~~~ scala
 import csvside._
@@ -73,14 +73,14 @@ val csv = i"""
 // To a sequence of this data structure...
 case class Test(key: String, values: Map[String, Int])
 
-// We do this by creating a `ListFormat`,
-// which parses the column headings and creates a `ColumnFormat`
+// We do this by creating a `ListReader`,
+// which parses the column headings and creates a `ColumnReader`
 // to read the rest of the file:
 
-implicit val testFormat: ListFormat[Test] = {
+implicit val testReader: ListReader[Test] = {
   import cats.data.Validated.{valid, invalid}
   import cats.syntax.apply._
-  ListFormat[Test] {
+  ListReader[Test] {
     case head :: tail =>
       valid((head.as[String] |@| tail.asMap[Option[Int]]) map (Test.apply))
 

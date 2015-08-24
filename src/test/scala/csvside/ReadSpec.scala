@@ -10,8 +10,8 @@ import unindent._
 
 class ReadSpec extends FreeSpec with Matchers {
   "read(string)" - {
-    "using ColumnFormat" - {
-      "valid" in new ColumnFormatFixtures {
+    "using ColumnReader" - {
+      "valid" in new ColumnReaderFixtures {
         val csv = i"""
           Str,Bool,Int
           abc,true,123
@@ -24,7 +24,7 @@ class ReadSpec extends FreeSpec with Matchers {
         ))
       }
 
-      "invalid" in new ColumnFormatFixtures {
+      "invalid" in new ColumnReaderFixtures {
         val csv = i"""
           Str,Bool,Int
           ,,
@@ -43,8 +43,8 @@ class ReadSpec extends FreeSpec with Matchers {
       }
     }
 
-    "using ListFormat" - {
-      "valid" in new ListFormatFixtures {
+    "using ListReader" - {
+      "valid" in new ListReaderFixtures {
         val csv = i"""
           Key,A,B,C
           x,1,2,3
@@ -59,7 +59,7 @@ class ReadSpec extends FreeSpec with Matchers {
         ))
       }
 
-      "invalid header row" in new ListFormatFixtures {
+      "invalid header row" in new ListReaderFixtures {
         val csv = i"""
           Badness,A,B,C
           """
@@ -69,7 +69,7 @@ class ReadSpec extends FreeSpec with Matchers {
         ))
       }
 
-      "invalid data rows" in new ListFormatFixtures {
+      "invalid data rows" in new ListReaderFixtures {
         val csv = i"""
           Key,A,B,C
           x,badness,2,3
@@ -90,21 +90,21 @@ class ReadSpec extends FreeSpec with Matchers {
   }
 }
 
-trait ColumnFormatFixtures {
+trait ColumnReaderFixtures {
   case class Test(a: String, b: Int, c: Option[Boolean])
 
-  implicit val testFormat: ColumnFormat[Test] = (
+  implicit val testReader: ColumnReader[Test] = (
     "Str".as[String] |@|
     "Int".as[Int] |@|
     "Bool".as[Option[Boolean]]
   ) map (Test.apply)
 }
 
-trait ListFormatFixtures {
+trait ListReaderFixtures {
   case class Test(a: String, b: Map[String, Option[Int]])
 
-  implicit val testFormat: ListFormat[Test] =
-    ListFormat[Test] {
+  implicit val testReader: ListReader[Test] =
+    ListReader[Test] {
       case "Key" :: tail =>
         valid(("Key".as[String] |@| tail.asMap[Option[Int]]) map (Test.apply))
 

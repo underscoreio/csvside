@@ -6,7 +6,7 @@ import cats.syntax.apply._
 
 import org.scalatest._
 
-class ColumnFormatSpec extends FreeSpec with Matchers {
+class ColumnReaderSpec extends FreeSpec with Matchers {
   val validRow = CsvRow(1, Map(
     "Column 1" -> "abc",
     "Column 2" -> "123",
@@ -35,7 +35,7 @@ class ColumnFormatSpec extends FreeSpec with Matchers {
 
   case class Test(a: String, b: Int, c: Boolean, d: Option[Double])
 
-  val testFormat: ColumnFormat[Test] = (
+  val testReader: ColumnReader[Test] = (
     "Column 1".as[String] |@|
     "Column 2".as[Int] |@|
     "Column 3".as[Boolean] |@|
@@ -76,7 +76,7 @@ class ColumnFormatSpec extends FreeSpec with Matchers {
 
   "applicative" - {
     "valid" in {
-      testFormat(validRow) should equal(valid(Test(
+      testReader(validRow) should equal(valid(Test(
         "abc",
         123,
         true,
@@ -85,7 +85,7 @@ class ColumnFormatSpec extends FreeSpec with Matchers {
     }
 
     "invalid" in {
-      testFormat(invalidRow) should equal(invalid(List(
+      testReader(invalidRow) should equal(invalid(List(
         CsvError(2, "Column 2", "Must be a whole number"),
         CsvError(2, "Column 3", "Must be a yes/no value"),
         CsvError(2, "Column 4", "Must be a number or blank")
@@ -93,7 +93,7 @@ class ColumnFormatSpec extends FreeSpec with Matchers {
     }
 
     "empty" in {
-      testFormat(emptyRow) should equal(invalid(List(
+      testReader(emptyRow) should equal(invalid(List(
         CsvError(3, "Column 2", "Must be a whole number"),
         CsvError(3, "Column 3", "Must be a yes/no value")
       )))

@@ -5,19 +5,19 @@ import scala.collection.JavaConversions._
 import cats.data.Validated.{valid, invalid}
 
 trait Read extends ReadRaw {
-  def read[A](file: File)(implicit format: ListFormat[A]): Seq[CsvValidated[A]] =
+  def read[A](file: File)(implicit format: ListReader[A]): Seq[CsvValidated[A]] =
     process(readRaw(file))
 
-  def read[A](reader: Reader)(implicit format: ListFormat[A]): Seq[CsvValidated[A]] =
+  def read[A](reader: Reader)(implicit format: ListReader[A]): Seq[CsvValidated[A]] =
     process(readRaw(reader))
 
-  def read[A](data: String)(implicit format: ListFormat[A]): Seq[CsvValidated[A]] =
+  def read[A](data: String)(implicit format: ListReader[A]): Seq[CsvValidated[A]] =
     process(readRaw(data))
 
-  def process[A](seq: Seq[List[String]])(implicit listFormat: ListFormat[A]): Seq[CsvValidated[A]] = {
+  def process[A](seq: Seq[List[String]])(implicit listReader: ListReader[A]): Seq[CsvValidated[A]] = {
     val cols = seq.head
 
-    listFormat(cols).fold(
+    listReader(cols).fold(
       errors => Seq(invalid(errors)),
       format => seq.tail.zipWithIndex map {
         case (cells, index) =>

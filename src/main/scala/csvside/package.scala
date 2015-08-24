@@ -1,6 +1,6 @@
 import cats.data.Validated
 
-package object csvside extends ColumnFormats with Read {
+package object csvside extends ColumnReaders with Read {
   type RowNumber = Int
 
   type CsvHead = String
