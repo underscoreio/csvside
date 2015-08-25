@@ -10,8 +10,8 @@ import unindent._
 
 class ReadSpec extends FreeSpec with Matchers {
   "read(string)" - {
-    "using ColumnReader" - {
-      "valid" in new ColumnReaderFixtures {
+    "using RowReader" - {
+      "valid" in new RowReaderFixtures {
         val csv = i"""
           Str,Bool,Int
           abc,true,123
@@ -24,7 +24,7 @@ class ReadSpec extends FreeSpec with Matchers {
         ))
       }
 
-      "invalid" in new ColumnReaderFixtures {
+      "invalid" in new RowReaderFixtures {
         val csv = i"""
           Str,Bool,Int
           ,,
@@ -90,13 +90,13 @@ class ReadSpec extends FreeSpec with Matchers {
   }
 }
 
-trait ColumnReaderFixtures {
+trait RowReaderFixtures {
   case class Test(a: String, b: Int, c: Option[Boolean])
 
-  implicit val testReader: ColumnReader[Test] = (
-    "Str".as[String] |@|
-    "Int".as[Int] |@|
-    "Bool".as[Option[Boolean]]
+  implicit val testReader: RowReader[Test] = (
+    "Str".read[String] |@|
+    "Int".read[Int] |@|
+    "Bool".read[Option[Boolean]]
   ) map (Test.apply)
 }
 
@@ -106,7 +106,7 @@ trait ListReaderFixtures {
   implicit val testReader: ListReader[Test] =
     ListReader[Test] {
       case "Key" :: tail =>
-        valid(("Key".as[String] |@| tail.asMap[Option[Int]]) map (Test.apply))
+        valid(("Key".read[String] |@| tail.readMap[Option[Int]]) map (Test.apply))
 
       case cells =>
         invalid(List(CsvError(1, "", s"Bad header row: ${cells.mkString(", ")}")))

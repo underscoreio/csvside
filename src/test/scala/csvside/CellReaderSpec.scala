@@ -8,77 +8,77 @@ import org.scalatest._
 
 class CellReaderSpec extends FreeSpec with Matchers with CellReaders {
   "stringReader" - {
-    val format = implicitly[CellReader[String]]
+    val reader = implicitly[CellReader[String]]
 
     "valid" in {
-      format(CsvCell(1, "Col", "Hi")) should equal(valid("Hi"))
+      reader(CsvCell(1, "Col", "Hi")) should equal(valid("Hi"))
     }
   }
 
   "intReader" - {
-    val format = implicitly[CellReader[Int]]
+    val reader = implicitly[CellReader[Int]]
 
     "valid" in {
-      format(CsvCell(1, "Col", "123")) should equal(valid(123))
+      reader(CsvCell(1, "Col", "123")) should equal(valid(123))
     }
 
     "invalid" in {
-      format(CsvCell(1, "Col", "123.4")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
-      format(CsvCell(1, "Col", "abc")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
+      reader(CsvCell(1, "Col", "123.4")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
+      reader(CsvCell(1, "Col", "abc")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
     }
   }
 
   "longReader" - {
-    val format = implicitly[CellReader[Long]]
+    val reader = implicitly[CellReader[Long]]
 
     "valid" in {
-      format(CsvCell(1, "Col", "123")) should equal(valid(123L))
+      reader(CsvCell(1, "Col", "123")) should equal(valid(123L))
     }
 
     "invalid" in {
-      format(CsvCell(1, "Col", "123.4")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
-      format(CsvCell(1, "Col", "abc")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
+      reader(CsvCell(1, "Col", "123.4")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
+      reader(CsvCell(1, "Col", "abc")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
     }
   }
 
   "doubleReader" - {
-    val format = implicitly[CellReader[Double]]
+    val reader = implicitly[CellReader[Double]]
 
     "valid" in {
-      format(CsvCell(1, "Col", "123")) should equal(valid(123.0))
+      reader(CsvCell(1, "Col", "123")) should equal(valid(123.0))
     }
 
     "invalid" in {
-      format(CsvCell(1, "Col", "abc")) should equal(invalid(List(CsvError(1, "Col", "Must be a number"))))
+      reader(CsvCell(1, "Col", "abc")) should equal(invalid(List(CsvError(1, "Col", "Must be a number"))))
     }
   }
 
   "optionReader" - {
-    val format = implicitly[CellReader[Option[Int]]]
+    val reader = implicitly[CellReader[Option[Int]]]
 
     "present and valid" - {
-      format(CsvCell(1, "Col", "123")) should equal(valid(Some(123)))
+      reader(CsvCell(1, "Col", "123")) should equal(valid(Some(123)))
     }
 
     "present and invalid" - {
-      format(CsvCell(1, "Col", "abc")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number or blank"))))
+      reader(CsvCell(1, "Col", "abc")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number or blank"))))
     }
 
     "absent" - {
-      format(CsvCell(1, "Col", "") )should equal(valid(None))
+      reader(CsvCell(1, "Col", "") )should equal(valid(None))
     }
   }
 
   "cellReader.map" - {
     case class Id(value: Int)
-    val format = implicitly[CellReader[Int]].map(Id(_))
+    val reader = implicitly[CellReader[Int]].map(Id(_))
 
     "valid" in {
-      format(CsvCell(1, "Col", "123")) should be(valid(Id(123)))
+      reader(CsvCell(1, "Col", "123")) should be(valid(Id(123)))
     }
 
     "invalid" in {
-      format(CsvCell(1, "Col", "abc")) should be(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
+      reader(CsvCell(1, "Col", "abc")) should be(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
     }
   }
 }

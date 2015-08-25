@@ -32,9 +32,9 @@ case class Test(str: String, num: Int, bool: Option[Boolean])
 implicit val testReader: ColumnReader[Test] = {
   import cats.syntax.apply._
   (
-    "Str".as[String] |@|
-    "Int".as[Int] |@|
-    "Bool".as[Option[Boolean]]
+    "Str".read[String] |@|
+    "Int".read[Int] |@|
+    "Bool".read[Option[Boolean]]
   ) map (Test.apply)
 }
 
@@ -82,7 +82,7 @@ implicit val testReader: ListReader[Test] = {
   import cats.syntax.apply._
   ListReader[Test] {
     case head :: tail =>
-      valid((head.as[String] |@| tail.asMap[Option[Int]]) map (Test.apply))
+      valid((head.read[String] |@| tail.readMap[Option[Int]]) map (Test.apply))
 
     case Nil =>
       invalid(List(CsvError(1, "", "CSV file must contain at least one column")))
