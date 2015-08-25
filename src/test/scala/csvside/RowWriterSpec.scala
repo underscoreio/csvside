@@ -41,61 +41,29 @@ class RowWriterSpec extends FreeSpec with Matchers {
     "Column 3".write[Boolean].contramap[Test](_.c) ~
     "Column 4".write[Option[Double]].contramap[Test](_.d)
 
-  // "constant[A]" - {
-  //   val data   = new Exception("WOO!")
-  //   val writer = constant[Exception](data)
+  "writeConstant[A]" - {
+    val data = new Exception("Foo")
+    implicit val exceptionWriter = CellWriter[Exception](_.getMessage)
+    val writer = "Column 1".writeConstant[Exception](data)
 
-  //   "valid" in {
-  //     writer(emptyRow) should equal(valid(data))
-  //   }
-  // }
+    "valid" in {
+      writer(data, 1) should equal(CsvRow(1, Map("Column 1" -> "Foo")))
+    }
+  }
 
-  // "as[A]" - {
-  //   "valid" in {
-  //     writer1(validRow) should equal(valid("abc"))
-  //     writer2(validRow) should equal(valid(123))
-  //     writer3(validRow) should equal(valid(true))
-  //     writer4(validRow) should equal(valid(None))
-  //   }
+  "single writers" in {
+    writer1("abc", 1) should equal(CsvRow(1, Map("Column 1" -> "abc")))
+    writer2(123  , 1) should equal(CsvRow(1, Map("Column 2" -> "123")))
+    writer3(true , 1) should equal(CsvRow(1, Map("Column 3" -> "true")))
+    writer4(None , 1) should equal(CsvRow(1, Map("Column 4" -> "")))
+  }
 
-  //   "invalid" in {
-  //     writer1(invalidRow) should equal(valid("abc"))
-  //     writer2(invalidRow) should equal(invalid(List(CsvError(2, "Column 2", "Must be a whole number"))))
-  //     writer3(invalidRow) should equal(invalid(List(CsvError(2, "Column 3", "Must be a yes/no value"))))
-  //     writer4(invalidRow) should equal(invalid(List(CsvError(2, "Column 4", "Must be a number or blank"))))
-  //   }
-
-  //   "empty" in {
-  //     writer1(emptyRow) should equal(valid(""))
-  //     writer2(emptyRow) should equal(invalid(List(CsvError(3, "Column 2", "Must be a whole number"))))
-  //     writer3(emptyRow) should equal(invalid(List(CsvError(3, "Column 3", "Must be a yes/no value"))))
-  //     writer4(emptyRow) should equal(valid(None))
-  //   }
-  // }
-
-  // "applicative" - {
-  //   "valid" in {
-  //     testWriter(validRow) should equal(valid(Test(
-  //       "abc",
-  //       123,
-  //       true,
-  //       None
-  //     )))
-  //   }
-
-  //   "invalid" in {
-  //     testWriter(invalidRow) should equal(invalid(List(
-  //       CsvError(2, "Column 2", "Must be a whole number"),
-  //       CsvError(2, "Column 3", "Must be a yes/no value"),
-  //       CsvError(2, "Column 4", "Must be a number or blank")
-  //     )))
-  //   }
-
-  //   "empty" in {
-  //     testWriter(emptyRow) should equal(invalid(List(
-  //       CsvError(3, "Column 2", "Must be a whole number"),
-  //       CsvError(3, "Column 3", "Must be a yes/no value")
-  //     )))
-  //   }
-  // }
+  "compound writer" in {
+    testWriter(Test("abc", 123, true, None), 1) should equal(CsvRow(1, Map(
+      "Column 1" -> "abc",
+      "Column 2" -> "123",
+      "Column 3" -> "true",
+      "Column 4" -> ""
+    )))
+  }
 }

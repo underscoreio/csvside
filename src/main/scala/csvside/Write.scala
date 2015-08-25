@@ -7,16 +7,14 @@ import scala.collection.JavaConversions._
 import cats.data.Validated.{valid, invalid}
 
 trait Write extends WriteRaw {
-  implicit class CsvWriteOps[A](items: Seq[A]) {
-    def toCsvString(implicit rowWriter: RowWriter[A]): String =
-      writeRawString(rowWriter.heads, items.zipWithIndex map rowWriter.tupled)
+  def csvString[A](items: Seq[A])(implicit rowWriter: RowWriter[A]): String =
+    writeRawString(rowWriter.heads, items.zipWithIndex map rowWriter.tupled)
 
-    def toCsvFile(file: File)(implicit rowWriter: RowWriter[A]): Unit =
-      writeRawFile(rowWriter.heads, items.zipWithIndex map rowWriter.tupled, file)
+  def writeCsvFile[A](items: Seq[A], file: File)(implicit rowWriter: RowWriter[A]): Unit =
+    writeRawFile(rowWriter.heads, items.zipWithIndex map rowWriter.tupled, file)
 
-    def writeCsv(writer: Writer)(implicit rowWriter: RowWriter[A]): Unit =
-      writeRaw(rowWriter.heads, items.zipWithIndex map rowWriter.tupled, writer)
-  }
+  def writeCsv[A](items: Seq[A], writer: Writer)(implicit rowWriter: RowWriter[A]): Unit =
+    writeRaw(rowWriter.heads, items.zipWithIndex map rowWriter.tupled, writer)
 }
 
 trait WriteRaw {
