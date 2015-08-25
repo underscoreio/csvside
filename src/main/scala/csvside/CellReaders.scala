@@ -9,7 +9,7 @@ trait CellReaders {
       valid(cell.value)
     }
 
-  private def numericFormat[A](func: String => A)(msg: String): CellReader[A] =
+  private def numericReader[A](func: String => A)(msg: String): CellReader[A] =
     CellReader[A] { cell =>
       try {
         valid(func(cell.value))
@@ -20,13 +20,13 @@ trait CellReaders {
     }
 
   implicit val intReader: CellReader[Int] =
-    numericFormat(_.toInt)("Must be a whole number")
+    numericReader(_.toInt)("Must be a whole number")
 
   implicit val longReader: CellReader[Long] =
-    numericFormat(_.toLong)("Must be a whole number")
+    numericReader(_.toLong)("Must be a whole number")
 
   implicit val doubleReader: CellReader[Double] =
-    numericFormat(_.toDouble)("Must be a number")
+    numericReader(_.toDouble)("Must be a number")
 
   implicit val booleanReader: CellReader[Boolean] =
     CellReader[Boolean] { cell =>
@@ -45,14 +45,14 @@ trait CellReaders {
       }
     }
 
-  implicit def optionReader[A](implicit format: CellReader[A]): CellReader[Option[A]] = {
+  implicit def optionReader[A](implicit reader: CellReader[A]): CellReader[Option[A]] = {
     def suffix(errors: List[CsvError]): List[CsvError] =
       errors.map(error => error.copy(message = error.message + " or blank"))
 
     CellReader[Option[A]] { cell =>
       cell.value.trim match {
         case "" => valid(None)
-        case _  => format(cell).bimap(suffix, Some(_))
+        case _  => reader(cell).bimap(suffix, Some(_))
       }
     }
   }

@@ -6,7 +6,7 @@ import cats.syntax.apply._
 
 import org.scalatest._
 
-class ColumnReaderSpec extends FreeSpec with Matchers {
+class RowReaderSpec extends FreeSpec with Matchers {
   val validRow = CsvRow(1, Map(
     "Column 1" -> "abc",
     "Column 2" -> "123",
@@ -28,49 +28,49 @@ class ColumnReaderSpec extends FreeSpec with Matchers {
     "Column 4" -> ""
   ))
 
-  val format1 = "Column 1".as[String]
-  val format2 = "Column 2".as[Int]
-  val format3 = "Column 3".as[Boolean]
-  val format4 = "Column 4".as[Option[Double]]
+  val reader1 = "Column 1".read[String]
+  val reader2 = "Column 2".read[Int]
+  val reader3 = "Column 3".read[Boolean]
+  val reader4 = "Column 4".read[Option[Double]]
 
   case class Test(a: String, b: Int, c: Boolean, d: Option[Double])
 
-  val testReader: ColumnReader[Test] = (
-    "Column 1".as[String] |@|
-    "Column 2".as[Int] |@|
-    "Column 3".as[Boolean] |@|
-    "Column 4".as[Option[Double]]
+  val testReader: RowReader[Test] = (
+    "Column 1".read[String]  |@|
+    "Column 2".read[Int]     |@|
+    "Column 3".read[Boolean] |@|
+    "Column 4".read[Option[Double]]
   ) map (Test.apply)
 
-  "constant[A]" - {
+  "readConstant[A]" - {
     val data   = new Exception("WOO!")
-    val format = constant[Exception](data)
+    val reader = readConstant[Exception](data)
 
     "valid" in {
-      format(emptyRow) should equal(valid(data))
+      reader(emptyRow) should equal(valid(data))
     }
   }
 
-  "as[A]" - {
+  "read[A]" - {
     "valid" in {
-      format1(validRow) should equal(valid("abc"))
-      format2(validRow) should equal(valid(123))
-      format3(validRow) should equal(valid(true))
-      format4(validRow) should equal(valid(None))
+      reader1(validRow) should equal(valid("abc"))
+      reader2(validRow) should equal(valid(123))
+      reader3(validRow) should equal(valid(true))
+      reader4(validRow) should equal(valid(None))
     }
 
     "invalid" in {
-      format1(invalidRow) should equal(valid("abc"))
-      format2(invalidRow) should equal(invalid(List(CsvError(2, "Column 2", "Must be a whole number"))))
-      format3(invalidRow) should equal(invalid(List(CsvError(2, "Column 3", "Must be a yes/no value"))))
-      format4(invalidRow) should equal(invalid(List(CsvError(2, "Column 4", "Must be a number or blank"))))
+      reader1(invalidRow) should equal(valid("abc"))
+      reader2(invalidRow) should equal(invalid(List(CsvError(2, "Column 2", "Must be a whole number"))))
+      reader3(invalidRow) should equal(invalid(List(CsvError(2, "Column 3", "Must be a yes/no value"))))
+      reader4(invalidRow) should equal(invalid(List(CsvError(2, "Column 4", "Must be a number or blank"))))
     }
 
     "empty" in {
-      format1(emptyRow) should equal(valid(""))
-      format2(emptyRow) should equal(invalid(List(CsvError(3, "Column 2", "Must be a whole number"))))
-      format3(emptyRow) should equal(invalid(List(CsvError(3, "Column 3", "Must be a yes/no value"))))
-      format4(emptyRow) should equal(valid(None))
+      reader1(emptyRow) should equal(valid(""))
+      reader2(emptyRow) should equal(invalid(List(CsvError(3, "Column 2", "Must be a whole number"))))
+      reader3(emptyRow) should equal(invalid(List(CsvError(3, "Column 3", "Must be a yes/no value"))))
+      reader4(emptyRow) should equal(valid(None))
     }
   }
 
