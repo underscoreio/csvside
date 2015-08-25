@@ -2,7 +2,7 @@ name := "csvside"
 
 organization := "io.underscore"
 
-version := "0.7.0"
+version := "0.8.0"
 
 scalaVersion := "2.11.7"
 
@@ -21,10 +21,10 @@ libraryDependencies ++= Seq(
   "org.spire-math" %% "cats-std"  % "0.1.0-SNAPSHOT"
 )
 
-// OpenCSV:
+// MightyCSV:
 
 libraryDependencies ++= Seq(
-  "com.opencsv" % "opencsv" % "3.4"
+  "com.bizo" %% "mighty-csv" % "0.2"
 )
 
 // Scalatest:

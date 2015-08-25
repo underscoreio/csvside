@@ -3,34 +3,33 @@ package csvside
 import cats.data.Validated
 import cats.data.Validated.{invalid, valid}
 
-trait CellFormats {
-  implicit val stringFormat: CellFormat[String] =
-    CellFormat[String] { cell =>
+trait CellReaders {
+  implicit val stringReader: CellReader[String] =
+    CellReader[String] { cell =>
       valid(cell.value)
     }
 
-  implicit val intFormat: CellFormat[Int] =
-    CellFormat[Int] { cell =>
+  private def numericReader[A](func: String => A)(msg: String): CellReader[A] =
+    CellReader[A] { cell =>
       try {
-        valid(cell.value.toInt)
+        valid(func(cell.value))
       } catch {
         case exn: NumberFormatException =>
-          invalid(List(cell.error("Must be a whole number")))
+          invalid(List(cell.error(msg)))
       }
     }
 
-  implicit val doubleFormat: CellFormat[Double] =
-    CellFormat[Double] { cell =>
-      try {
-        valid(cell.value.toDouble)
-      } catch {
-        case exn: NumberFormatException =>
-          invalid(List(cell.error("Must be a number")))
-      }
-    }
+  implicit val intReader: CellReader[Int] =
+    numericReader(_.toInt)("Must be a whole number")
 
-  implicit val booleanFormat: CellFormat[Boolean] =
-    CellFormat[Boolean] { cell =>
+  implicit val longReader: CellReader[Long] =
+    numericReader(_.toLong)("Must be a whole number")
+
+  implicit val doubleReader: CellReader[Double] =
+    numericReader(_.toDouble)("Must be a number")
+
+  implicit val booleanReader: CellReader[Boolean] =
+    CellReader[Boolean] { cell =>
       cell.value.toLowerCase match {
         case "true" => valid(true)
         case "false" => valid(false)
@@ -46,14 +45,14 @@ trait CellFormats {
       }
     }
 
-  implicit def optionFormat[A](implicit format: CellFormat[A]): CellFormat[Option[A]] = {
+  implicit def optionReader[A](implicit reader: CellReader[A]): CellReader[Option[A]] = {
     def suffix(errors: List[CsvError]): List[CsvError] =
       errors.map(error => error.copy(message = error.message + " or blank"))
 
-    CellFormat[Option[A]] { cell =>
+    CellReader[Option[A]] { cell =>
       cell.value.trim match {
         case "" => valid(None)
-        case _  => format(cell).bimap(suffix, Some(_))
+        case _  => reader(cell).bimap(suffix, Some(_))
       }
     }
   }
