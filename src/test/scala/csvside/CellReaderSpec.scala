@@ -15,6 +15,21 @@ class CellReaderSpec extends FreeSpec with Matchers with CellReaders {
     }
   }
 
+  "regexReader" - {
+    val reader = regexReader("^[A-Z]$".r, "Must be a single uppercase letter")
+
+    "valid" in {
+      reader(CsvCell(1, "Col", "A")) should equal(valid("A"))
+    }
+
+    "invalid" in {
+      val errors = invalid(List(CsvError(1, "Col", "Must be a single uppercase letter")))
+      reader(CsvCell(1, "Col", "")) should equal(errors)
+      reader(CsvCell(1, "Col", "a")) should equal(errors)
+      reader(CsvCell(1, "Col", "AB")) should equal(errors)
+    }
+  }
+
   "intReader" - {
     val reader = implicitly[CellReader[Int]]
 
@@ -23,8 +38,9 @@ class CellReaderSpec extends FreeSpec with Matchers with CellReaders {
     }
 
     "invalid" in {
-      reader(CsvCell(1, "Col", "123.4")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
-      reader(CsvCell(1, "Col", "abc")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
+      val errors = invalid(List(CsvError(1, "Col", "Must be a whole number")))
+      reader(CsvCell(1, "Col", "123.4")) should equal(errors)
+      reader(CsvCell(1, "Col", "abc")) should equal(errors)
     }
   }
 
@@ -36,8 +52,9 @@ class CellReaderSpec extends FreeSpec with Matchers with CellReaders {
     }
 
     "invalid" in {
-      reader(CsvCell(1, "Col", "123.4")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
-      reader(CsvCell(1, "Col", "abc")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
+      val errors = invalid(List(CsvError(1, "Col", "Must be a whole number")))
+      reader(CsvCell(1, "Col", "123.4")) should equal(errors)
+      reader(CsvCell(1, "Col", "abc")) should equal(errors)
     }
   }
 
@@ -49,23 +66,25 @@ class CellReaderSpec extends FreeSpec with Matchers with CellReaders {
     }
 
     "invalid" in {
-      reader(CsvCell(1, "Col", "abc")) should equal(invalid(List(CsvError(1, "Col", "Must be a number"))))
+      val errors = invalid(List(CsvError(1, "Col", "Must be a number")))
+      reader(CsvCell(1, "Col", "abc")) should equal(errors)
     }
   }
 
   "optionReader" - {
     val reader = implicitly[CellReader[Option[Int]]]
 
-    "present and valid" - {
+    "present and valid" in {
       reader(CsvCell(1, "Col", "123")) should equal(valid(Some(123)))
     }
 
-    "present and invalid" - {
-      reader(CsvCell(1, "Col", "abc")) should equal(invalid(List(CsvError(1, "Col", "Must be a whole number or blank"))))
+    "present and invalid" in {
+      val errors = invalid(List(CsvError(1, "Col", "Must be a whole number or blank")))
+      reader(CsvCell(1, "Col", "abc")) should equal(errors)
     }
 
-    "absent" - {
-      reader(CsvCell(1, "Col", "") )should equal(valid(None))
+    "absent" in {
+      reader(CsvCell(1, "Col", "")) should equal(valid(None))
     }
   }
 
