@@ -2,11 +2,23 @@ package csvside
 
 import cats.data.Validated
 import cats.data.Validated.{invalid, valid}
+import scala.util.matching.Regex
 
 trait CellReaders {
   implicit val stringReader: CellReader[String] =
     CellReader[String] { cell =>
       valid(cell.value)
+    }
+
+  def regexReader(regex: Regex, msg: String): CellReader[String] =
+    CellReader[String] { cell =>
+      // We don't use pattern matching here because
+      // we don't know how many capturing groups the user has placed in regex:
+      if(regex.pattern.matcher(cell.value).matches) {
+        valid(cell.value)
+      } else {
+        invalid(List(cell.error(msg)))
+      }
     }
 
   private def numericReader[A](func: String => A)(msg: String): CellReader[A] =
