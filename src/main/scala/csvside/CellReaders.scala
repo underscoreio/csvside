@@ -7,15 +7,17 @@ import scala.util.matching.Regex
 trait CellReaders {
   implicit val stringReader: CellReader[String] =
     CellReader[String] { cell =>
-      valid(cell.value)
+      valid(cell.value.trim)
     }
 
   def regexReader(regex: Regex, msg: String): CellReader[String] =
     CellReader[String] { cell =>
+      val trimmed = cell.value.trim
+
       // We don't use pattern matching here because
       // we don't know how many capturing groups the user has placed in regex:
-      if(regex.pattern.matcher(cell.value).matches) {
-        valid(cell.value)
+      if(regex.pattern.matcher(trimmed).matches) {
+        valid(trimmed)
       } else {
         invalid(List(cell.error(msg)))
       }
@@ -24,7 +26,7 @@ trait CellReaders {
   private def numericReader[A](func: String => A)(msg: String): CellReader[A] =
     CellReader[A] { cell =>
       try {
-        valid(func(cell.value))
+        valid(func(cell.value.trim))
       } catch {
         case exn: NumberFormatException =>
           invalid(List(cell.error(msg)))
@@ -42,7 +44,7 @@ trait CellReaders {
 
   implicit val booleanReader: CellReader[Boolean] =
     CellReader[Boolean] { cell =>
-      cell.value.toLowerCase match {
+      cell.value.trim.toLowerCase match {
         case "true" => valid(true)
         case "false" => valid(false)
         case "yes" => valid(true)

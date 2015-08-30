@@ -13,6 +13,10 @@ class CellReaderSpec extends FreeSpec with Matchers with CellReaders {
     "valid" in {
       reader(CsvCell(1, "Col", "Hi")) should equal(valid("Hi"))
     }
+
+    "trimmed" in {
+      reader(CsvCell(1, "Col", "  a b c  ")) should equal(valid("a b c"))
+    }
   }
 
   "regexReader" - {
@@ -28,6 +32,10 @@ class CellReaderSpec extends FreeSpec with Matchers with CellReaders {
       reader(CsvCell(1, "Col", "a")) should equal(errors)
       reader(CsvCell(1, "Col", "AB")) should equal(errors)
     }
+
+    "trimmed" in {
+      reader(CsvCell(1, "Col", "  A  ")) should equal(valid("A"))
+    }
   }
 
   "intReader" - {
@@ -41,6 +49,10 @@ class CellReaderSpec extends FreeSpec with Matchers with CellReaders {
       val errors = invalid(List(CsvError(1, "Col", "Must be a whole number")))
       reader(CsvCell(1, "Col", "123.4")) should equal(errors)
       reader(CsvCell(1, "Col", "abc")) should equal(errors)
+    }
+
+    "trimmed" in {
+      reader(CsvCell(1, "Col", "  123  ")) should equal(valid(123))
     }
   }
 
@@ -56,6 +68,10 @@ class CellReaderSpec extends FreeSpec with Matchers with CellReaders {
       reader(CsvCell(1, "Col", "123.4")) should equal(errors)
       reader(CsvCell(1, "Col", "abc")) should equal(errors)
     }
+
+    "trimmed" in {
+      reader(CsvCell(1, "Col", "  123  ")) should equal(valid(123L))
+    }
   }
 
   "doubleReader" - {
@@ -68,6 +84,10 @@ class CellReaderSpec extends FreeSpec with Matchers with CellReaders {
     "invalid" in {
       val errors = invalid(List(CsvError(1, "Col", "Must be a number")))
       reader(CsvCell(1, "Col", "abc")) should equal(errors)
+    }
+
+    "trimmed" in {
+      reader(CsvCell(1, "Col", "  123.4  ")) should equal(valid(123.4))
     }
   }
 
@@ -86,6 +106,11 @@ class CellReaderSpec extends FreeSpec with Matchers with CellReaders {
     "absent" in {
       reader(CsvCell(1, "Col", "")) should equal(valid(None))
     }
+
+    "trimmed" in {
+      reader(CsvCell(1, "Col", "  123  ")) should equal(valid(Some(123)))
+      reader(CsvCell(1, "Col", "    ")) should equal(valid(None))
+    }
   }
 
   "cellReader.map" - {
@@ -98,6 +123,10 @@ class CellReaderSpec extends FreeSpec with Matchers with CellReaders {
 
     "invalid" in {
       reader(CsvCell(1, "Col", "abc")) should be(invalid(List(CsvError(1, "Col", "Must be a whole number"))))
+    }
+
+    "trimmed" in {
+      reader(CsvCell(1, "Col", "  123  ")) should equal(valid(Id(123)))
     }
   }
 }
