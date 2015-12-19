@@ -2,7 +2,7 @@ package csvside
 
 import cats.data.Validated
 import cats.data.Validated.{valid, invalid}
-import cats.syntax.apply._
+import cats.syntax.monoidal._
 
 import org.scalatest._
 
@@ -11,10 +11,11 @@ import unindent._
 class WriteSpec extends FreeSpec with Matchers {
   case class Test(a: String, b: Int, c: Option[Boolean])
 
-  implicit val testWriter: RowWriter[Test] =
-    "Str".write[String].contramap[Test](_.a) ~
-    "Int".write[Int].contramap[Test](_.b) ~
-    "Bool".write[Option[Boolean]].contramap[Test](_.c)
+  implicit val testWriter: RowWriter[Test] = (
+    "Str".write[String] |@|
+    "Int".write[Int]    |@|
+    "Bool".write[Option[Boolean]]
+  ) contramap (unlift(Test.unapply))
 
   "csvString" in {
     csvString(Seq(

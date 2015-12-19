@@ -23,7 +23,7 @@ trait Read extends ReadRaw {
       errors => Seq(invalid(errors)),
       reader => seq.tail.zipWithIndex map {
         case (cells, index) =>
-          reader(CsvRow(index + 2, (cols zip cells).toMap)).fold(
+          reader.read(CsvRow(index + 2, (cols zip cells).toMap)).fold(
             errors => invalid(errors),
             result => valid(result)
           )
