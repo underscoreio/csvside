@@ -12,9 +12,9 @@ class FormatSpec extends FreeSpec with Matchers {
   case class Test(a: String, b: Int, c: Option[Boolean])
 
   implicit val testWriter: RowFormat[Test] = (
-    "Str".csvFormat[String] |@|
-    "Int".csvFormat[Int]    |@|
-    "Bool".csvFormat[Option[Boolean]]
+    "Str".csv[String] |@|
+    "Int".csv[Int]    |@|
+    "Bool".csv[Option[Boolean]]
   ).imap(Test.apply)(unlift(Test.unapply))
 
   "valid read" in {

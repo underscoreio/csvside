@@ -6,7 +6,7 @@ import cats.syntax.traverse._
 
 trait RowFormats extends RowReaders with RowWriters {
   implicit class CsvHeadFormatOps(head: CsvHead) {
-    def csvFormat[A](implicit reader: CellReader[A], writer: CellWriter[A]): RowFormat[A] =
+    def csv[A](implicit reader: CellReader[A], writer: CellWriter[A]): RowFormat[A] =
       RowFormat[A](head.read[A], head.write[A])
   }
 }

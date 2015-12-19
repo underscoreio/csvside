@@ -7,20 +7,20 @@ import scala.collection.JavaConversions._
 import cats.data.Validated.{valid, invalid}
 
 trait Read extends ReadRaw {
-  def read[A: ListReader](file: File): Seq[CsvValidated[A]] =
+  def read[A: ListReader](file: File): Stream[CsvValidated[A]] =
     process(readRaw(file))
 
-  def read[A: ListReader](reader: Reader): Seq[CsvValidated[A]] =
+  def read[A: ListReader](reader: Reader): Stream[CsvValidated[A]] =
     process(readRaw(reader))
 
-  def read[A: ListReader](data: String): Seq[CsvValidated[A]] =
+  def read[A: ListReader](data: String): Stream[CsvValidated[A]] =
     process(readRaw(data))
 
-  def process[A](seq: Seq[List[String]])(implicit reader: ListReader[A]): Seq[CsvValidated[A]] = {
+  def process[A](seq: Stream[List[String]])(implicit reader: ListReader[A]): Stream[CsvValidated[A]] = {
     val cols = seq.head
 
     reader(cols).fold(
-      errors => Seq(invalid(errors)),
+      errors => Stream(invalid(errors)),
       reader => seq.tail.zipWithIndex map {
         case (cells, index) =>
           reader.read(CsvRow(index + 2, (cols zip cells).toMap)).fold(
@@ -33,14 +33,14 @@ trait Read extends ReadRaw {
 }
 
 trait ReadRaw {
-  private[csvside] def readRaw(file: File): Seq[List[String]] = {
+  private[csvside] def readRaw(file: File): Stream[List[String]] = {
     val reader = new FileReader(file)
     try readRaw(reader) finally reader.close()
   }
 
-  private[csvside] def readRaw(in: String): Seq[List[String]] =
+  private[csvside] def readRaw(in: String): Stream[List[String]] =
     readRaw(new StringReader(in))
 
-  private[csvside] def readRaw(reader: Reader): Seq[List[String]] =
+  private[csvside] def readRaw(reader: Reader): Stream[List[String]] =
     MightyCsvReader(new OpenCsvReader(reader)).map(_.toList).toStream
 }
