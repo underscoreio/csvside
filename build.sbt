@@ -17,8 +17,7 @@ scalacOptions ++= Seq(
 resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 libraryDependencies ++= Seq(
-  "org.spire-math" %% "cats-core" % "0.1.0-SNAPSHOT",
-  "org.spire-math" %% "cats-std"  % "0.1.0-SNAPSHOT"
+  "org.spire-math" %% "cats" % "0.4.0-SNAPSHOT"
 )
 
 // MightyCSV:

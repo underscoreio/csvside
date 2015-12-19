@@ -8,13 +8,13 @@ import cats.data.Validated.{valid, invalid}
 
 trait Write extends WriteRaw {
   def csvString[A](items: Seq[A])(implicit rowWriter: RowWriter[A]): String =
-    writeRawString(rowWriter.heads, items.zipWithIndex map rowWriter.tupled)
+    writeRawString(rowWriter.heads, items.zipWithIndex map rowWriter.tupledWrite)
 
   def writeCsvFile[A](items: Seq[A], file: File)(implicit rowWriter: RowWriter[A]): Unit =
-    writeRawFile(rowWriter.heads, items.zipWithIndex map rowWriter.tupled, file)
+    writeRawFile(rowWriter.heads, items.zipWithIndex map rowWriter.tupledWrite, file)
 
   def writeCsv[A](items: Seq[A], writer: Writer)(implicit rowWriter: RowWriter[A]): Unit =
-    writeRaw(rowWriter.heads, items.zipWithIndex map rowWriter.tupled, writer)
+    writeRaw(rowWriter.heads, items.zipWithIndex map rowWriter.tupledWrite, writer)
 }
 
 trait WriteRaw {

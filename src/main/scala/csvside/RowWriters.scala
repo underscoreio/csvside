@@ -1,6 +1,5 @@
 package csvside
 
-import cats.Applicative
 import cats.data.Validated.{valid, invalid}
 import cats.std.all._
 import cats.syntax.traverse._
@@ -17,4 +16,7 @@ trait RowWriters extends CellWriters {
         CsvRow(row, Map(head -> writer(value)))
       }
   }
+
+  def unlift[A, B](func: A => Option[B]): A => B =
+    (value: A) => func(value).get
 }
