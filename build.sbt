@@ -2,7 +2,7 @@ name := "csvside"
 
 organization := "io.underscore"
 
-version := "0.9.0"
+version := "0.10.0"
 
 scalaVersion := "2.11.7"
 
@@ -17,8 +17,7 @@ scalacOptions ++= Seq(
 resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 libraryDependencies ++= Seq(
-  "org.spire-math" %% "cats-core" % "0.1.0-SNAPSHOT",
-  "org.spire-math" %% "cats-std"  % "0.1.0-SNAPSHOT"
+  "org.spire-math" %% "cats" % "0.4.0-SNAPSHOT"
 )
 
 // MightyCSV:

@@ -2,7 +2,7 @@ package csvside
 
 import cats.data.Validated
 import cats.data.Validated.{valid, invalid}
-import cats.syntax.apply._
+import cats.syntax.monoidal._
 
 import org.scalatest._
 
@@ -47,19 +47,19 @@ class RowWriterSpec extends FreeSpec with Matchers {
     val writer = "Column 1".writeConstant[Exception](data)
 
     "valid" in {
-      writer(data, 1) should equal(CsvRow(1, Map("Column 1" -> "Foo")))
+      writer.write(data, 1) should equal(CsvRow(1, Map("Column 1" -> "Foo")))
     }
   }
 
   "single writers" in {
-    writer1("abc", 1) should equal(CsvRow(1, Map("Column 1" -> "abc")))
-    writer2(123  , 1) should equal(CsvRow(1, Map("Column 2" -> "123")))
-    writer3(true , 1) should equal(CsvRow(1, Map("Column 3" -> "true")))
-    writer4(None , 1) should equal(CsvRow(1, Map("Column 4" -> "")))
+    writer1.write("abc", 1) should equal(CsvRow(1, Map("Column 1" -> "abc")))
+    writer2.write(123  , 1) should equal(CsvRow(1, Map("Column 2" -> "123")))
+    writer3.write(true , 1) should equal(CsvRow(1, Map("Column 3" -> "true")))
+    writer4.write(None , 1) should equal(CsvRow(1, Map("Column 4" -> "")))
   }
 
   "compound writer" in {
-    testWriter(Test("abc", 123, true, None), 1) should equal(CsvRow(1, Map(
+    testWriter.write(Test("abc", 123, true, None), 1) should equal(CsvRow(1, Map(
       "Column 1" -> "abc",
       "Column 2" -> "123",
       "Column 3" -> "true",
