@@ -13,7 +13,7 @@ scalaVersion := "2.11.7"
 
 resolvers += "Awesome Utilities" at "https://dl.bintray.com/davegurnell/maven"
 
-libraryDependencies += "io.underscore" %% "csvside" % "0.7.0"
+libraryDependencies += "io.underscore" %% "csvside" % "0.10.1"
 ~~~
 
 ### Fixed Row Reader
