@@ -1,35 +1,29 @@
 package csvside
 
 import cats.data.Validated
-import cats.data.Validated.{invalid, valid}
+import cats.syntax.validated._
 import scala.util.matching.Regex
 
 trait CellReaders {
   implicit val stringReader: CellReader[String] =
-    CellReader[String] { cell =>
-      valid(cell.value.trim)
-    }
+    CellReader[String] { value => value.trim.valid }
 
   def regexReader(regex: Regex, msg: String): CellReader[String] =
-    CellReader[String] { cell =>
-      val trimmed = cell.value.trim
+    CellReader[String] { value =>
+      val trimmed = value.trim
 
       // We don't use pattern matching here because
       // we don't know how many capturing groups the user has placed in regex:
-      if(regex.pattern.matcher(trimmed).matches) {
-        valid(trimmed)
-      } else {
-        invalid(List(cell.error(msg)))
-      }
+      if(regex.pattern.matcher(trimmed).matches) trimmed.valid else msg.invalid
     }
 
   private def numericReader[A](func: String => A)(msg: String): CellReader[A] =
-    CellReader[A] { cell =>
+    CellReader[A] { value =>
       try {
-        valid(func(cell.value.trim))
+        func(value.trim).valid
       } catch {
         case exn: NumberFormatException =>
-          invalid(List(cell.error(msg)))
+          msg.invalid
       }
     }
 
@@ -43,30 +37,27 @@ trait CellReaders {
     numericReader(_.toDouble)("Must be a number")
 
   implicit val booleanReader: CellReader[Boolean] =
-    CellReader[Boolean] { cell =>
-      cell.value.trim.toLowerCase match {
-        case "true" => valid(true)
-        case "false" => valid(false)
-        case "yes" => valid(true)
-        case "no" => valid(false)
-        case "y" => valid(true)
-        case "n" => valid(false)
-        case "t" => valid(true)
-        case "f" => valid(false)
-        case "1" => valid(true)
-        case "0" => valid(false)
-        case _ => invalid(List(cell.error("Must be a yes/no value")))
+    CellReader[Boolean] { value =>
+      value.trim.toLowerCase match {
+        case "true"  => true.valid
+        case "false" => false.valid
+        case "yes"   => true.valid
+        case "no"    => false.valid
+        case "y"     => true.valid
+        case "n"     => false.valid
+        case "t"     => true.valid
+        case "f"     => false.valid
+        case "1"     => true.valid
+        case "0"     => false.valid
+        case _       => "Must be a yes/no value".invalid
       }
     }
 
   implicit def optionReader[A](implicit reader: CellReader[A]): CellReader[Option[A]] = {
-    def suffix(errors: List[CsvError]): List[CsvError] =
-      errors.map(error => error.copy(message = error.message + " or blank"))
-
-    CellReader[Option[A]] { cell =>
-      cell.value.trim match {
-        case "" => valid(None)
-        case _  => reader(cell).bimap(suffix, Some(_))
+    CellReader[Option[A]] { value =>
+      value.trim match {
+        case "" => None.valid
+        case _  => reader(value).bimap(_ + " or blank", Some(_))
       }
     }
   }

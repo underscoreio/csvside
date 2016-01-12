@@ -19,6 +19,9 @@ project/plugins/project/
 .scala_dependencies
 .worksheet
 
+# ENSIME specific
+.ensime
+.ensime_cache
 
 ### Intellij ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm

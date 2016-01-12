@@ -17,7 +17,8 @@ trait Read extends ReadRaw {
     process(readRaw(data))
 
   def process[A](seq: Stream[List[String]])(implicit reader: ListReader[A]): Stream[CsvValidated[A]] = {
-    val cols = seq.head
+    val cols: List[CsvPath] =
+      seq.head.map(CsvPath.apply)
 
     reader(cols).fold(
       errors => Stream(invalid(errors)),

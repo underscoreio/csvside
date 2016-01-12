@@ -3,7 +3,6 @@ package csvside
 import au.com.bytecode.opencsv.{CSVWriter => OpenCsvWriter}
 import com.bizo.mighty.csv.{CSVDictWriter => MightyCsvWriter}
 import java.io.{File, Writer, FileWriter, StringWriter}
-import scala.collection.JavaConversions._
 import cats.data.Validated.{valid, invalid}
 
 trait Write extends WriteRaw {
@@ -18,7 +17,7 @@ trait Write extends WriteRaw {
 }
 
 trait WriteRaw {
-  private[csvside] def writeRawString(heads: List[CsvHead], rows: Seq[CsvRow]): String = {
+  private[csvside] def writeRawString(heads: List[CsvPath], rows: Seq[CsvRow]): String = {
     val writer = new StringWriter()
     try {
       writeRaw(heads, rows, writer)
@@ -26,14 +25,14 @@ trait WriteRaw {
     } finally writer.close()
   }
 
-  private[csvside] def writeRawFile(heads: List[CsvHead], rows: Seq[CsvRow], file: File): Unit = {
+  private[csvside] def writeRawFile(heads: List[CsvPath], rows: Seq[CsvRow], file: File): Unit = {
     val writer = new FileWriter(file)
     try writeRaw(heads, rows, writer) finally writer.close()
   }
 
-  private[csvside] def writeRaw(heads: List[CsvHead], rows: Seq[CsvRow], writer: Writer): Unit = {
-    val output = MightyCsvWriter(new OpenCsvWriter(writer), heads)
+  private[csvside] def writeRaw(heads: List[CsvPath], rows: Seq[CsvRow], writer: Writer): Unit = {
+    val output = MightyCsvWriter(new OpenCsvWriter(writer), heads map (_.text))
     output.writeHeader()
-    rows.foreach(row => output.write(row.values))
+    rows.foreach(row => output.write(row.values.map { case (head, value) => (head.text) -> value }))
   }
 }

@@ -13,7 +13,7 @@ scalaVersion := "2.11.7"
 
 resolvers += "Awesome Utilities" at "https://dl.bintray.com/davegurnell/maven"
 
-libraryDependencies += "io.underscore" %% "csvside" % "0.10.1"
+libraryDependencies += "io.underscore" %% "csvside" % "0.11.1"
 ~~~
 
 ### Fixed Row Reader
@@ -79,7 +79,7 @@ val csv = s"""
 """.trim.stripMargin
 
 // To a sequence of this data structure...
-case class Test(key: String, values: Map[CsvHead, Option[Int]])
+case class Test(key: String, values: Map[CsvPath, Option[Int]])
 
 // We do this by creating a `ListReader` that
 // parses the column headings and creates a `ColumnReader`

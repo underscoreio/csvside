@@ -5,7 +5,7 @@ import cats.Monoidal
 import cats.functor.Contravariant
 
 trait RowWriter[-A] {
-  def heads: List[CsvHead]
+  def heads: List[CsvPath]
 
   def write(value: A, row: Int): CsvRow
 
@@ -24,7 +24,7 @@ trait RowWriter[-A] {
 }
 
 object RowWriter {
-  def apply[A](heads: List[CsvHead])(func: (A, Int) => CsvRow): RowWriter[A] = {
+  def apply[A](heads: List[CsvPath])(func: (A, Int) => CsvRow): RowWriter[A] = {
     val _heads = heads
     new RowWriter[A] {
       val heads = _heads

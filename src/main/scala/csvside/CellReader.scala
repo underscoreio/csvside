@@ -1,14 +1,16 @@
 package csvside
 
-trait CellReader[+A] extends (CsvCell => CsvValidated[A]) {
+import cats.data.Validated
+
+trait CellReader[+A] extends (String => Validated[String, A]) {
   def map[B](func: A => B): CellReader[B] =
     CellReader[B](cell => this(cell).map(func))
 }
 
 object CellReader {
-  def apply[A](func: CsvCell => CsvValidated[A]): CellReader[A] =
+  def apply[A](func: String => Validated[String, A]): CellReader[A] =
     new CellReader[A] {
-      def apply(csv: CsvCell): CsvValidated[A] =
+      def apply(csv: String): Validated[String, A] =
         func(csv)
     }
 }

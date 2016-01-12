@@ -8,24 +8,24 @@ import org.scalatest._
 
 class RowWriterSpec extends FreeSpec with Matchers {
   val validRow = CsvRow(1, Map(
-    "Column 1" -> "abc",
-    "Column 2" -> "123",
-    "Column 3" -> "yes",
-    "Column 4" -> ""
+    CsvPath("Column 1") -> "abc",
+    CsvPath("Column 2") -> "123",
+    CsvPath("Column 3") -> "yes",
+    CsvPath("Column 4") -> ""
   ))
 
   val invalidRow = CsvRow(2, Map(
-    "Column 1" -> "abc",
-    "Column 2" -> "abc",
-    "Column 3" -> "abc",
-    "Column 4" -> "abc"
+    CsvPath("Column 1") -> "abc",
+    CsvPath("Column 2") -> "abc",
+    CsvPath("Column 3") -> "abc",
+    CsvPath("Column 4") -> "abc"
   ))
 
   val emptyRow = CsvRow(3, Map(
-    "Column 1" -> "",
-    "Column 2" -> "",
-    "Column 3" -> "",
-    "Column 4" -> ""
+    CsvPath("Column 1") -> "",
+    CsvPath("Column 2") -> "",
+    CsvPath("Column 3") -> "",
+    CsvPath("Column 4") -> ""
   ))
 
   val writer1 = "Column 1".write[String]
@@ -47,23 +47,23 @@ class RowWriterSpec extends FreeSpec with Matchers {
     val writer = "Column 1".writeConstant[Exception](data)
 
     "valid" in {
-      writer.write(data, 1) should equal(CsvRow(1, Map("Column 1" -> "Foo")))
+      writer.write(data, 1) should equal(CsvRow(1, Map(CsvPath("Column 1") -> "Foo")))
     }
   }
 
   "single writers" in {
-    writer1.write("abc", 1) should equal(CsvRow(1, Map("Column 1" -> "abc")))
-    writer2.write(123  , 1) should equal(CsvRow(1, Map("Column 2" -> "123")))
-    writer3.write(true , 1) should equal(CsvRow(1, Map("Column 3" -> "true")))
-    writer4.write(None , 1) should equal(CsvRow(1, Map("Column 4" -> "")))
+    writer1.write("abc", 1) should equal(CsvRow(1, Map(CsvPath("Column 1") -> "abc")))
+    writer2.write(123  , 1) should equal(CsvRow(1, Map(CsvPath("Column 2") -> "123")))
+    writer3.write(true , 1) should equal(CsvRow(1, Map(CsvPath("Column 3") -> "true")))
+    writer4.write(None , 1) should equal(CsvRow(1, Map(CsvPath("Column 4") -> "")))
   }
 
   "compound writer" in {
     testWriter.write(Test("abc", 123, true, None), 1) should equal(CsvRow(1, Map(
-      "Column 1" -> "abc",
-      "Column 2" -> "123",
-      "Column 3" -> "true",
-      "Column 4" -> ""
+      CsvPath("Column 1") -> "abc",
+      CsvPath("Column 2") -> "123",
+      CsvPath("Column 3") -> "true",
+      CsvPath("Column 4") -> ""
     )))
   }
 }

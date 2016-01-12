@@ -5,7 +5,7 @@ import cats.std.all._
 import cats.syntax.traverse._
 
 trait RowWriters extends CellWriters {
-  implicit class CsvHeadWriterOps(head: CsvHead) {
+  implicit class CsvPathWriterOps(head: CsvPath) {
     def writeConstant[A](value: A)(implicit writer: CellWriter[A]) =
       RowWriter[A](List(head)) { (value, row) =>
         CsvRow(row, Map(head -> writer(value)))
@@ -15,6 +15,14 @@ trait RowWriters extends CellWriters {
       RowWriter[A](List(head)) { (value, row) =>
         CsvRow(row, Map(head -> writer(value)))
       }
+  }
+
+  implicit class StringWriterOps(head: String) {
+    def writeConstant[A](value: A)(implicit writer: CellWriter[A]) =
+      CsvPath(head).writeConstant[A](value)
+
+    def write[A](implicit writer: CellWriter[A]): RowWriter[A] =
+      CsvPath(head).write[A]
   }
 
   def unlift[A, B](func: A => Option[B]): A => B =

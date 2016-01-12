@@ -8,24 +8,24 @@ import org.scalatest._
 
 class RowReaderSpec extends FreeSpec with Matchers {
   val validRow = CsvRow(1, Map(
-    "Column 1" -> "abc",
-    "Column 2" -> "123",
-    "Column 3" -> "yes",
-    "Column 4" -> ""
+    CsvPath("Column 1") -> "abc",
+    CsvPath("Column 2") -> "123",
+    CsvPath("Column 3") -> "yes",
+    CsvPath("Column 4") -> ""
   ))
 
   val invalidRow = CsvRow(2, Map(
-    "Column 1" -> "abc",
-    "Column 2" -> "abc",
-    "Column 3" -> "abc",
-    "Column 4" -> "abc"
+    CsvPath("Column 1") -> "abc",
+    CsvPath("Column 2") -> "abc",
+    CsvPath("Column 3") -> "abc",
+    CsvPath("Column 4") -> "abc"
   ))
 
   val emptyRow = CsvRow(3, Map(
-    "Column 1" -> "",
-    "Column 2" -> "",
-    "Column 3" -> "",
-    "Column 4" -> ""
+    CsvPath("Column 1") -> "",
+    CsvPath("Column 2") -> "",
+    CsvPath("Column 3") -> "",
+    CsvPath("Column 4") -> ""
   ))
 
   val reader1 = "Column 1".read[String]
@@ -61,15 +61,15 @@ class RowReaderSpec extends FreeSpec with Matchers {
 
     "invalid" in {
       reader1.read(invalidRow) should equal(valid("abc"))
-      reader2.read(invalidRow) should equal(invalid(List(CsvError(2, "Column 2", "Must be a whole number"))))
-      reader3.read(invalidRow) should equal(invalid(List(CsvError(2, "Column 3", "Must be a yes/no value"))))
-      reader4.read(invalidRow) should equal(invalid(List(CsvError(2, "Column 4", "Must be a number or blank"))))
+      reader2.read(invalidRow) should equal(invalid(List(CsvError(2, CsvPath("Column 2"), "Must be a whole number"))))
+      reader3.read(invalidRow) should equal(invalid(List(CsvError(2, CsvPath("Column 3"), "Must be a yes/no value"))))
+      reader4.read(invalidRow) should equal(invalid(List(CsvError(2, CsvPath("Column 4"), "Must be a number or blank"))))
     }
 
     "empty" in {
       reader1.read(emptyRow) should equal(valid(""))
-      reader2.read(emptyRow) should equal(invalid(List(CsvError(3, "Column 2", "Must be a whole number"))))
-      reader3.read(emptyRow) should equal(invalid(List(CsvError(3, "Column 3", "Must be a yes/no value"))))
+      reader2.read(emptyRow) should equal(invalid(List(CsvError(3, CsvPath("Column 2"), "Must be a whole number"))))
+      reader3.read(emptyRow) should equal(invalid(List(CsvError(3, CsvPath("Column 3"), "Must be a yes/no value"))))
       reader4.read(emptyRow) should equal(valid(None))
     }
   }
@@ -86,16 +86,16 @@ class RowReaderSpec extends FreeSpec with Matchers {
 
     "invalid" in {
       testReader.read(invalidRow) should equal(invalid(List(
-        CsvError(2, "Column 2", "Must be a whole number"),
-        CsvError(2, "Column 3", "Must be a yes/no value"),
-        CsvError(2, "Column 4", "Must be a number or blank")
+        CsvError(2, CsvPath("Column 2"), "Must be a whole number"),
+        CsvError(2, CsvPath("Column 3"), "Must be a yes/no value"),
+        CsvError(2, CsvPath("Column 4"), "Must be a number or blank")
       )))
     }
 
     "empty" in {
       testReader.read(emptyRow) should equal(invalid(List(
-        CsvError(3, "Column 2", "Must be a whole number"),
-        CsvError(3, "Column 3", "Must be a yes/no value")
+        CsvError(3, CsvPath("Column 2"), "Must be a whole number"),
+        CsvError(3, CsvPath("Column 3"), "Must be a yes/no value")
       )))
     }
   }

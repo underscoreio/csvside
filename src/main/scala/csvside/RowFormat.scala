@@ -2,11 +2,19 @@ package csvside
 
 import scala.language.higherKinds
 import cats.Monoidal
+import cats.data.Validated
 import cats.functor.Invariant
 import cats.std.list._
 import cats.syntax.monoidal._
+import cats.syntax.validated._
 
-trait RowFormat[A] extends RowReader[A] with RowWriter[A]
+trait RowFormat[A] extends RowReader[A] with RowWriter[A] {
+  def ivalidate[B <: A](forward: A => Validated[String, B]): RowFormat[B] =
+    ivalidate(forward, identity)
+
+  def ivalidate[B](forward: A => Validated[String, B], reverse: B => A): RowFormat[B] =
+    RowFormat[B](this.validate(forward), this.contramap(reverse))
+}
 
 object RowFormat {
   def apply[A](reader: RowReader[A], writer: RowWriter[A]): RowFormat[A] =
@@ -14,7 +22,7 @@ object RowFormat {
       def read(row: CsvRow): CsvValidated[A] =
         reader.read(row)
 
-      def heads: List[CsvHead] =
+      def heads: List[CsvPath] =
         writer.heads
 
       def write(value: A, row: Int): CsvRow =
@@ -31,7 +39,7 @@ object RowFormat {
             (a |@| b).tupled
           }
 
-          def heads: List[CsvHead] =
+          def heads: List[CsvPath] =
             format1.heads ++ format2.heads
 
           def write(value: (A, B), row: Int): CsvRow = {
@@ -49,7 +57,7 @@ object RowFormat {
           def read(row: CsvRow): CsvValidated[B] =
             format.read(row).map(f)
 
-          def heads: List[CsvHead] =
+          def heads: List[CsvPath] =
             format.heads
 
           def write(value: B, row: Int): CsvRow =
