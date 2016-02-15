@@ -38,7 +38,7 @@ case class Test(str: String, num: Int, bool: Option[Boolean])
 
 // We define a RowFormat...
 import csvside._
-import cats.syntax.monoidal._
+import cats.syntax.cartesian._
 implicit val testFormat: RowFormat[Test] = (
   "Str".csv[String] |@|
   "Int".csv[Int] |@|
@@ -88,7 +88,7 @@ case class Test(key: String, values: Map[CsvPath, Option[Int]])
 // to read the rest of the file:
 
 import cats.data.Validated.{valid, invalid}
-import cats.syntax.monoidal._
+import cats.syntax.cartesian._
 import cats.syntax.validated._
 import csvside._
 

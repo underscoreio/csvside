@@ -2,7 +2,7 @@ package csvside
 
 import cats.data.Validated
 import cats.data.Validated.{valid, invalid}
-import cats.syntax.monoidal._
+import cats.syntax.cartesian._
 import cats.syntax.validated._
 
 import org.scalatest._

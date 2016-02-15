@@ -1,11 +1,11 @@
 package csvside
 
 import scala.language.higherKinds
-import cats.Monoidal
+import cats.Cartesian
 import cats.data.Validated
 import cats.functor.Invariant
 import cats.std.list._
-import cats.syntax.monoidal._
+import cats.syntax.cartesian._
 import cats.syntax.validated._
 
 trait RowFormat[A] extends RowReader[A] with RowWriter[A] {
@@ -29,8 +29,8 @@ object RowFormat {
         writer.write(value, row)
     }
 
-  implicit val rowFormatMonoidal: Monoidal[RowFormat] =
-    new Monoidal[RowFormat] {
+  implicit val rowFormatCartesian: Cartesian[RowFormat] =
+    new Cartesian[RowFormat] {
       def product[A, B](format1: RowFormat[A], format2: RowFormat[B]): RowFormat[(A, B)] =
         new RowFormat[(A, B)] {
           def read(row: CsvRow): CsvValidated[(A, B)] = {
