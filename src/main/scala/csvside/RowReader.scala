@@ -3,7 +3,7 @@ package csvside
 import cats.Applicative
 import cats.data.Validated
 import cats.std.list._
-import cats.syntax.monoidal._
+import cats.syntax.cartesian._
 import cats.syntax.validated._
 
 trait RowReader[+A] {
@@ -49,10 +49,10 @@ object RowReader {
           (a |@| b).tupled
         }
 
-      def ap[A, B](reader1: RowReader[A])(reader2: RowReader[A => B]): RowReader[B] =
-        RowReader[B](reader1.heads ++ reader2.heads) { row =>
-          val a: CsvValidated[A]      = reader1.read(row)
-          val b: CsvValidated[A => B] = reader2.read(row)
+      def ap[A, B](reader1: RowReader[A => B])(reader2: RowReader[A]): RowReader[B] =
+        RowReader[B](reader2.heads ++ reader1.heads) { row =>
+          val a: CsvValidated[A]      = reader2.read(row)
+          val b: CsvValidated[A => B] = reader1.read(row)
           (b |@| a) map (_(_))
         }
     }

@@ -4,6 +4,8 @@ CSV readers and combinators for Scala. Made with Cats.
 
 Copyright 2015 Richard Dallaway and Dave Gurnell. Licensed [Apache 2][license].
 
+[![Build Status](https://travis-ci.org/davegurnell/csvside.svg?branch=develop)](https://travis-ci.org/davegurnell/csvside)
+
 ## Getting Started
 
 Grab the code from Bintray by adding the following to your `build.sbt`:
@@ -36,7 +38,7 @@ case class Test(str: String, num: Int, bool: Option[Boolean])
 
 // We define a RowFormat...
 import csvside._
-import cats.syntax.monoidal._
+import cats.syntax.cartesian._
 implicit val testFormat: RowFormat[Test] = (
   "Str".csv[String] |@|
   "Int".csv[Int] |@|
@@ -86,7 +88,7 @@ case class Test(key: String, values: Map[CsvPath, Option[Int]])
 // to read the rest of the file:
 
 import cats.data.Validated.{valid, invalid}
-import cats.syntax.monoidal._
+import cats.syntax.cartesian._
 import cats.syntax.validated._
 import csvside._
 

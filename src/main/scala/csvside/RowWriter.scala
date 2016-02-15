@@ -1,7 +1,7 @@
 package csvside
 
 import scala.language.higherKinds
-import cats.Monoidal
+import cats.Cartesian
 import cats.functor.Contravariant
 
 trait RowWriter[-A] {
@@ -32,8 +32,8 @@ object RowWriter {
     }
   }
 
-  implicit val rowWriterMonoidal: Monoidal[RowWriter] =
-    new Monoidal[RowWriter] {
+  implicit val rowWriterCartesian: Cartesian[RowWriter] =
+    new Cartesian[RowWriter] {
       def product[A, B](writer1: RowWriter[A], writer2: RowWriter[B]): RowWriter[(A, B)] =
         RowWriter[(A, B)](writer1.heads ++ writer2.heads) { (value, row) =>
           val row1 = writer1.write(value._1, row)
