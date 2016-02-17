@@ -2,7 +2,7 @@ name := "csvside"
 
 organization := "io.underscore"
 
-version := "0.12.0"
+version := "0.12.1"
 
 scalaVersion := "2.11.7"
 
