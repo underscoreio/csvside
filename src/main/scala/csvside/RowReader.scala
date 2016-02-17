@@ -46,14 +46,14 @@ object RowReader {
         RowReader[(A, B)](reader1.heads ++ reader2.heads) { row =>
           val a: CsvValidated[A] = reader1.read(row)
           val b: CsvValidated[B] = reader2.read(row)
-          (a |@| b).tupled
+          Applicative[CsvValidated].product(a, b)
         }
 
       def ap[A, B](reader1: RowReader[A => B])(reader2: RowReader[A]): RowReader[B] =
         RowReader[B](reader2.heads ++ reader1.heads) { row =>
-          val a: CsvValidated[A]      = reader2.read(row)
-          val b: CsvValidated[A => B] = reader1.read(row)
-          (b |@| a) map (_(_))
+          val a: CsvValidated[A => B] = reader1.read(row)
+          val b: CsvValidated[A]      = reader2.read(row)
+          Applicative[CsvValidated].ap(a)(b)
         }
     }
 }

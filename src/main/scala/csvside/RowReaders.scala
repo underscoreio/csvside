@@ -1,8 +1,10 @@
 package csvside
 
-import cats.std.all._
+import cats.data.Validated
+// import cats.std.all._
 import cats.syntax.traverse._
 import cats.syntax.validated._
+import scala.collection.mutable
 
 trait RowReaders extends CellReaders {
   def readConstant[A](value: A): RowReader[A] =
@@ -31,7 +33,30 @@ trait RowReaders extends CellReaders {
 
   implicit class CsvPathListOps(heads: List[CsvPath]) {
     def readMap[A](implicit reader: CellReader[A]): RowReader[Map[String, A]] =
-      heads.map(_.readPair[A]).sequence.map(_.toMap)
+      // NOTE: The previous implementation of readMap
+      // was very pretty and used applicatives and stuff,
+      // but caused stack overflows on very large column sets.
+      // This implementation is uglier but more efficient.
+      RowReader[Map[String, A]](heads) { row =>
+        val invalid = new mutable.ArrayBuffer[CsvError]()
+        val valid   = new mutable.HashMap[String, A]()
+        heads.foreach { head =>
+          row.get(head) match {
+            case Some(cell) =>
+              reader(cell.value) match {
+                case Validated.Valid(value) => valid.put(head.text, value)
+                case Validated.Invalid(msg) => invalid += CsvError(row.number, head, msg)
+              }
+            case None =>
+              invalid += CsvError(row.number, head, s"Column was empty")
+          }
+        }
+        if(invalid.isEmpty) {
+          Validated.valid(valid.toMap)
+        } else {
+          Validated.invalid(invalid.toList)
+        }
+      }
   }
 
   implicit class StringListOps(heads: List[String]) {

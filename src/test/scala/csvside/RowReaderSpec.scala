@@ -99,4 +99,16 @@ class RowReaderSpec extends FreeSpec with Matchers {
       )))
     }
   }
+
+  "readMap" - {
+    "large number of columns" in {
+      val columns = (0 to 10000).map(n => s"Column $n").toList
+      val values  = (0 to 10000).map(n => s"Value $n").toList
+      val row     = CsvRow(1, columns.map(CsvPath(_)).zip(values).toMap)
+
+      val format = columns.readMap[String]
+
+      format.read(row) should equal(Validated.valid(columns.zip(values).toMap))
+    }
+  }
 }
