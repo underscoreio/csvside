@@ -7,6 +7,9 @@ import cats.syntax.validated._
 import scala.collection.mutable
 
 trait RowReaders extends CellReaders {
+  def readLineNumber: RowReader[Int] =
+    RowReader[Int](CsvPath.emptyList) { row => row.number.valid }
+
   def readConstant[A](value: A): RowReader[A] =
     RowReader[A](CsvPath.emptyList) { row => value.valid }
 
