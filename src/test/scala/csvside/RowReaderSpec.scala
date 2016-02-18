@@ -42,6 +42,15 @@ class RowReaderSpec extends FreeSpec with Matchers {
     "Column 4".read[Option[Double]]
   ) map (Test.apply)
 
+  "readLineNumber" - {
+    val data   = new Exception("WOO!")
+    val reader = readLineNumber
+
+    "valid" in {
+      reader.read(emptyRow) should equal(valid(emptyRow.number))
+    }
+  }
+
   "readConstant[A]" - {
     val data   = new Exception("WOO!")
     val reader = readConstant[Exception](data)
