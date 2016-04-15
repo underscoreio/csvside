@@ -19,7 +19,7 @@ class ReadSpec extends FreeSpec with Matchers {
           "a b",false,321
           """
 
-        read[Test](csv) should equal(Seq(
+        read[Test](csv).toList should equal(List(
           valid(Test("abc", 123, Some(true))),
           valid(Test("a b", 321, Some(false)))
         ))
@@ -32,7 +32,7 @@ class ReadSpec extends FreeSpec with Matchers {
           abc,abc,abc
           """
 
-        read[Test](csv) should equal(Seq(
+        read[Test](csv).toList should equal(List(
           invalid(Seq(
             CsvError(2, CsvPath("Int"), "Must be a whole number")
           )),
@@ -53,7 +53,7 @@ class ReadSpec extends FreeSpec with Matchers {
           z,123,,456
           """
 
-        read[Test](csv) should equal(Seq(
+        read[Test](csv).toList should equal(List(
           valid(Test("x", Map("A" -> Some(1), "B" -> Some(2), "C" -> Some(3)))),
           valid(Test("y", Map("A" -> None, "B" -> None, "C" -> None))),
           valid(Test("z", Map("A" -> Some(123), "B" -> None, "C" -> Some(456))))
@@ -65,7 +65,7 @@ class ReadSpec extends FreeSpec with Matchers {
           Badness,A,B,C
           """
 
-        read[Test](csv) should equal(Seq(
+        read[Test](csv).toList should equal(List(
           invalid(List(CsvError(1, CsvPath(""), s"Bad header row: Badness, A, B, C")))
         ))
       }
@@ -77,7 +77,7 @@ class ReadSpec extends FreeSpec with Matchers {
           z,,badness,alsobadness
           """
 
-        read[Test](csv) should equal(Seq(
+        read[Test](csv).toList should equal(List(
           invalid(Seq(
             CsvError(2, CsvPath("A"), "Must be a whole number or blank")
           )),
@@ -109,7 +109,7 @@ class ReadSpec extends FreeSpec with Matchers {
         abc,123,true
         """
 
-      read[Test](csv) should equal(Seq(
+      read[Test](csv).toList should equal(List(
         valid(Test("abc", 246, Some(true)))
       ))
     }
@@ -120,7 +120,7 @@ class ReadSpec extends FreeSpec with Matchers {
         abc,,true
         """
 
-      read[Test](csv) should equal(Seq(
+      read[Test](csv).toList should equal(List(
         invalid(Seq(CsvError(2, CsvPath("Int"), "Must be a whole number")))
       ))
     }
@@ -131,7 +131,7 @@ class ReadSpec extends FreeSpec with Matchers {
         abc,-123,true
         """
 
-      read[Test](csv) should equal(Seq(
+      read[Test](csv).toList should equal(List(
         Seq(CsvError(2, CsvPath("Int"), "Must be > 0")).invalid
       ))
     }
