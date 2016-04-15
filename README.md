@@ -102,9 +102,12 @@ implicit val testReader: ListReader[Test] = {
   }
 }
 
-val ans = read[Test](csv)
-// ans: Seq[CsvValidated[Test]] =
-//   Stream(
+val iterator: Iterator[CsvValidated[Test]] =
+  read[Test](csv)
+
+val ans = iterator.toList
+// ans: List[CsvValidated[Test]] =
+//   List(
 //     Valid(Test("x", Map("Col1" -> Some(1), "Col2" -> Some(2), "Col3" -> Some(3)))),
 //     Valid(Test("y", Map("Col1" -> None,    "Col2" -> None,    "Col3" -> None))),
 //     Valid(Test("z", Map("Col1" -> Some(3), "Col2" -> None,    "Col3" -> Some(1)))))

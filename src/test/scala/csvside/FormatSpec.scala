@@ -25,7 +25,7 @@ class FormatSpec extends FreeSpec with Matchers {
       "a b",false,321
       """
 
-    read[Test](csv) should equal(Seq(
+    read[Test](csv).toList should equal(List(
       valid(Test("abc", 123, Some(true))),
       valid(Test("a b", 321, Some(false)))
     ))
@@ -38,7 +38,7 @@ class FormatSpec extends FreeSpec with Matchers {
       abc,abc,abc
       """
 
-    read[Test](csv) should equal(Seq(
+    read[Test](csv).toList should equal(List(
       invalid(Seq(
         CsvError(2, CsvPath("Int"), "Must be a whole number")
       )),
@@ -87,7 +87,7 @@ class FormatSpec extends FreeSpec with Matchers {
         abc,123,true
         """
 
-      read[Test](csv)(validatedTestReader) should equal(Seq(
+      read[Test](csv)(validatedTestReader).toList should equal(List(
         valid(Test("abc", 246, Some(true)))
       ))
     }
@@ -98,7 +98,7 @@ class FormatSpec extends FreeSpec with Matchers {
         abc,,true
         """
 
-      read[Test](csv)(validatedTestReader) should equal(Seq(
+      read[Test](csv)(validatedTestReader).toList should equal(List(
         invalid(Seq(CsvError(2, CsvPath("Int"), "Must be a whole number")))
       ))
     }
@@ -109,7 +109,7 @@ class FormatSpec extends FreeSpec with Matchers {
         abc,-123,true
         """
 
-      read[Test](csv)(validatedTestReader) should equal(Seq(
+      read[Test](csv)(validatedTestReader).toList should equal(List(
         invalid(Seq(CsvError(2, CsvPath("Int"), "Must be > 0")))
       ))
     }
