@@ -4,7 +4,7 @@ CSV readers and combinators for Scala. Made with Cats.
 
 Copyright 2015 Richard Dallaway and Dave Gurnell. Licensed [Apache 2][license].
 
-[![Build Status](https://travis-ci.org/davegurnell/csvside.svg?branch=develop)](https://travis-ci.org/davegurnell/csvside)
+[![Build Status](https://travis-ci.org/underscoreio/csvside.svg?branch=develop)](https://travis-ci.org/davegurnell/csvside)
 
 ## Getting Started
 
