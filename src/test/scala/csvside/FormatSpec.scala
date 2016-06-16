@@ -25,7 +25,7 @@ class FormatSpec extends FreeSpec with Matchers {
       "a b",false,321
       """
 
-    read[Test](csv).toList should equal(List(
+    Csv.fromString[Test](csv).toList should equal(List(
       valid(Test("abc", 123, Some(true))),
       valid(Test("a b", 321, Some(false)))
     ))
@@ -38,7 +38,7 @@ class FormatSpec extends FreeSpec with Matchers {
       abc,abc,abc
       """
 
-    read[Test](csv).toList should equal(List(
+    Csv.fromString[Test](csv).toList should equal(List(
       invalid(Seq(
         CsvError(2, CsvPath("Int"), "Must be a whole number")
       )),
@@ -50,7 +50,7 @@ class FormatSpec extends FreeSpec with Matchers {
   }
 
   "write" in {
-    csvString(Seq(
+    Csv.toString(Seq(
       Test("abc", 123, Some(true)),
       Test("a b", 321, Some(false)),
       Test("", 0, None)
@@ -87,7 +87,7 @@ class FormatSpec extends FreeSpec with Matchers {
         abc,123,true
         """
 
-      read[Test](csv)(validatedTestReader).toList should equal(List(
+      Csv.fromString[Test](csv)(validatedTestReader).toList should equal(List(
         valid(Test("abc", 246, Some(true)))
       ))
     }
@@ -98,7 +98,7 @@ class FormatSpec extends FreeSpec with Matchers {
         abc,,true
         """
 
-      read[Test](csv)(validatedTestReader).toList should equal(List(
+      Csv.fromString[Test](csv)(validatedTestReader).toList should equal(List(
         invalid(Seq(CsvError(2, CsvPath("Int"), "Must be a whole number")))
       ))
     }
@@ -109,13 +109,13 @@ class FormatSpec extends FreeSpec with Matchers {
         abc,-123,true
         """
 
-      read[Test](csv)(validatedTestReader).toList should equal(List(
+      Csv.fromString[Test](csv)(validatedTestReader).toList should equal(List(
         invalid(Seq(CsvError(2, CsvPath("Int"), "Must be > 0")))
       ))
     }
 
     "should tranform written values" in {
-      csvString(Seq(
+      Csv.toString(Seq(
         Test("abc", 246, Some(true)),
         Test("def", 468, None)
       ))(validatedTestFormat) should equal {

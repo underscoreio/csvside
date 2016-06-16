@@ -6,31 +6,31 @@ import java.io.{File, Reader, FileReader, StringReader}
 import scala.collection.JavaConversions._
 import cats.data.Validated.{valid, invalid}
 
-trait Read extends ReadRaw {
-  def read[A: ListReader](file: File): Iterator[CsvValidated[A]] =
-    process(readRaw(file))
+trait Read extends ReadInternals {
+  def fromFile[A](file: File)(implicit listReader: ListReader[A]): Iterator[CsvValidated[A]] =
+    fromIterator(fileIterator(file))
 
-  def read[A: ListReader](reader: Reader): Iterator[CsvValidated[A]] =
-    process(readRaw(reader))
+  def fromReader[A](reader: Reader)(implicit listReader: ListReader[A]): Iterator[CsvValidated[A]] =
+    fromIterator(readerIterator(reader))
 
-  def read[A: ListReader](data: String): Iterator[CsvValidated[A]] =
-    process(readRaw(data))
+  def fromString[A](data: String)(implicit listReader: ListReader[A]): Iterator[CsvValidated[A]] =
+    fromIterator(stringIterator(data))
 
-  def process[A](iterator: Iterator[List[String]])(implicit reader: ListReader[A]): Iterator[CsvValidated[A]] = {
+  def fromIterator[A](iterator: Iterator[List[String]])(implicit listReader: ListReader[A]): Iterator[CsvValidated[A]] = {
     if(!iterator.hasNext) {
       Iterator.empty
     } else {
       val cols: List[CsvPath] =
         iterator.next.map(CsvPath.apply)
 
-      reader(cols).fold(
-        errors => Iterator(invalid(errors)),
-        reader => new Iterator[CsvValidated[A]] {
+      listReader(cols).fold(
+        errors    => Iterator(invalid(errors)),
+        rowReader => new Iterator[CsvValidated[A]] {
           var rowNumber = 1 // incremented before use... effectively starts at 2
           def hasNext = iterator.hasNext
           def next = {
             rowNumber = rowNumber + 1
-            reader
+            rowReader
               .read(CsvRow(rowNumber, (cols zip iterator.next).toMap))
               .fold(
                 errors => invalid(errors),
@@ -43,15 +43,15 @@ trait Read extends ReadRaw {
   }
 }
 
-trait ReadRaw {
-  private[csvside] def readRaw(file: File): Iterator[List[String]] = {
+trait ReadInternals {
+  def fileIterator(file: File): Iterator[List[String]] = {
     val reader = new FileReader(file)
-    try readRaw(reader) finally reader.close()
+    try readerIterator(reader) finally reader.close()
   }
 
-  private[csvside] def readRaw(in: String): Iterator[List[String]] =
-    readRaw(new StringReader(in))
+  def stringIterator(in: String): Iterator[List[String]] =
+    readerIterator(new StringReader(in))
 
-  private[csvside] def readRaw(reader: Reader): Iterator[List[String]] =
+  def readerIterator(reader: Reader): Iterator[List[String]] =
     MightyCsvReader(new OpenCsvReader(reader)).map(_.toList)
 }

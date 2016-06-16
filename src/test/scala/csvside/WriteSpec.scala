@@ -17,8 +17,8 @@ class WriteSpec extends FreeSpec with Matchers {
     "Bool".write[Option[Boolean]]
   ) contramap (unlift(Test.unapply))
 
-  "csvString" in {
-    csvString(Seq(
+  "Csv.toString" in {
+    Csv.toString(Seq(
       Test("abc", 123, Some(true)),
       Test("a b", 321, Some(false)),
       Test("", 0, None)

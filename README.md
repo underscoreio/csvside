@@ -36,8 +36,10 @@ val csv = """
 // To a sequence of this data structure...
 case class Test(str: String, num: Int, bool: Option[Boolean])
 
-// We define a RowFormat...
+// We import Csvside...
 import csvside._
+
+// We define a RowFormat...
 import cats.syntax.cartesian._
 implicit val testFormat: RowFormat[Test] = (
   "Str".csv[String] |@|
@@ -45,9 +47,8 @@ implicit val testFormat: RowFormat[Test] = (
   "Bool".csv[Option[Boolean]]
 ).imap(Test.apply)(unlift(Test.unapply))
 
-// And read the data...
-val ans = read[Test](csv).toList
-// ans: Seq[Validated[Seq[String], Test]] =
+// We read the data...
+val ans = Csv.fromString[Test](csv).toList
 // ans: List[csvside.CsvValidated[Test]] = List(
 //   Valid(Test(abc,123,Some(true))),
 //   Valid(Test(a b,321,Some(false))),
@@ -55,10 +56,10 @@ val ans = read[Test](csv).toList
 //   Invalid(List(CsvError(5,Int,Must be a whole number),
 //                CsvError(5,Bool,Must be a yes/no value or blank))))
 
-// And write it back to CSV...
+// And we write it back to CSV...
 import cats.data.Validated
 val validOnly = ans collect { case Validated.Valid(test) => test }
-val finalCsv = csvString(validOnly)
+val finalCsv = Csv.toString(validOnly)
 // finalCsv: String =
 // ""Str","Int","Bool"
 // "abc","123","true"
@@ -85,27 +86,26 @@ case class Test(key: String, values: Map[CsvPath, Option[Int]])
 
 // We do this by creating a `ListReader` that
 // parses the column headings and creates a `ColumnReader`
-// to read the rest of the file:
+// to read the rest of the file.
 
+// We import from Csvside...
+import csvside._
+
+// We define a ListReader...
 import cats.data.Validated.{valid, invalid}
 import cats.syntax.cartesian._
 import cats.syntax.validated._
-import csvside._
-
-implicit val testReader: ListReader[Test] = {
+implicit val testReader: ListReader[Test] =
   ListReader[Test] {
     case head :: tail =>
       (head.read[String] |@| tail.readMap[Option[Int]]).map(Test.apply).valid
 
     case Nil =>
-      invalid(List(CsvError(1, "", "CSV file must contain at least one column")))
+      invalid(List(CsvError(1, "", "File must contain at least one column")))
   }
-}
 
-val iterator: Iterator[CsvValidated[Test]] =
-  read[Test](csv)
-
-val ans = iterator.toList
+// And we read the data...
+val ans = Csv.fromString[Test](csv).toList
 // ans: List[CsvValidated[Test]] =
 //   List(
 //     Valid(Test("x", Map("Col1" -> Some(1), "Col2" -> Some(2), "Col3" -> Some(3)))),
