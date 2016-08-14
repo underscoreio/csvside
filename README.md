@@ -8,14 +8,10 @@ Copyright 2015 Richard Dallaway and Dave Gurnell. Licensed [Apache 2][license].
 
 ## Getting Started
 
-Grab the code from Bintray by adding the following to your `build.sbt`:
+Grab the code by adding the following to your `build.sbt`:
 
 ~~~ scala
-scalaVersion := "2.11.7"
-
-resolvers += "Awesome Utilities" at "https://dl.bintray.com/davegurnell/maven"
-
-libraryDependencies += "io.underscore" %% "csvside" % "0.11.1"
+libraryDependencies += "io.underscore" %% "csvside" % "<<VERSION>>"
 ~~~
 
 ### Fixed Row Reader

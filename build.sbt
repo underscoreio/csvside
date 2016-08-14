@@ -1,8 +1,9 @@
-name := "csvside"
-
+name         := "csvside"
 organization := "io.underscore"
+version      := "0.15.0"
+scalaVersion := "2.11.8"
 
-scalaVersion := "2.11.7"
+licenses += ("Apache-2.0", url("http://apache.org/licenses/LICENSE-2.0"))
 
 scalacOptions ++= Seq(
   "-feature",
@@ -10,38 +11,32 @@ scalacOptions ++= Seq(
   "-deprecation"
 )
 
-// Cats:
-
-resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-
 libraryDependencies ++= Seq(
-  "org.typelevel" %% "cats" % "0.4.1"
+  "com.bizo"        %% "mighty-csv" % "0.2",
+  "org.typelevel"   %% "cats"       % "0.4.1",
+  "com.davegurnell" %% "unindent"   % "1.0.0" % "test",
+  "org.scalatest"   %% "scalatest"  % "2.2.4" % "test"
 )
 
-// MightyCSV:
+sonatypeProfileName := "io.underscore"
 
-libraryDependencies ++= Seq(
-  "com.bizo" %% "mighty-csv" % "0.2"
-)
-
-// Scalatest:
-
-libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "2.2.4" % "test"
-)
-
-// Unindent:
-
-resolvers += "Awesome Utilities" at "https://dl.bintray.com/davegurnell/maven"
-
-libraryDependencies ++= Seq(
-  "com.davegurnell" %% "unindent" % "1.0.0"
-)
-
-// Bintray:
-
-licenses += ("Apache-2.0", url("http://apache.org/licenses/LICENSE-2.0"))
-
-bintrayPackageLabels in bintray := Seq("scala", "csv", "utility")
-
-bintrayRepository in bintray := "maven"
+pomExtra in Global := {
+  <url>https://github.com/underscoreio/csvside</url>
+  <scm>
+    <connection>scm:git:github.com/underscoreio/csvside</connection>
+    <developerConnection>scm:git:git@github.com:underscoreio/csvside</developerConnection>
+    <url>github.com/underscoreio/csvside</url>
+  </scm>
+  <developers>
+    <developer>
+      <id>d6y</id>
+      <name>Richard Dallaway</name>
+      <url>http://twitter.com/d6y</url>
+    </developer>
+    <developer>
+      <id>davegurnell</id>
+      <name>Dave Gurnell</name>
+      <url>http://twitter.com/davegurnell</url>
+    </developer>
+  </developers>
+}
