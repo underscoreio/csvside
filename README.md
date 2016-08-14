@@ -4,7 +4,8 @@ CSV readers and combinators for Scala. Made with Cats.
 
 Copyright 2015 Richard Dallaway and Dave Gurnell. Licensed [Apache 2][license].
 
-[![Build Status](https://travis-ci.org/underscoreio/csvside.svg?branch=develop)](https://travis-ci.org/davegurnell/csvside)
+[![Build Status](https://travis-ci.org/underscoreio/csvside.svg?branch=develop)](https://travis-ci.org/underscoreio/csvside)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.underscore/csvside_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.underscore/csvside_2.11)
 
 ## Getting Started
 
@@ -14,7 +15,9 @@ Grab the code by adding the following to your `build.sbt`:
 libraryDependencies += "io.underscore" %% "csvside" % "<<VERSION>>"
 ~~~
 
-### Fixed Row Reader
+## Synopsis
+
+### Fixed Reader Row CSV Files
 
 Here's an example that reads directly from a `String`.
 You can also read from a `java.io.File` or a `java.io.Reader`:
@@ -63,7 +66,7 @@ val finalCsv = Csv.toString(validOnly)
 // "
 ~~~
 
-### Row Reader Depends on Header Row
+### Variable Header Row CSV Files
 
 If the format of the rows depends on the values in the header row,
 we can use a `ListReader[A]` to generate a `ColumnReader[A]` on the fly:
