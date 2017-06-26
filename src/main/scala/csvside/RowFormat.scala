@@ -4,7 +4,7 @@ import scala.language.higherKinds
 import cats.Cartesian
 import cats.data.Validated
 import cats.functor.Invariant
-import cats.std.list._
+import cats.instances.list._
 import cats.syntax.cartesian._
 import cats.syntax.validated._
 
@@ -19,7 +19,7 @@ trait RowFormat[A] extends RowReader[A] with RowWriter[A] {
 object RowFormat {
   def apply[A](reader: RowReader[A], writer: RowWriter[A]): RowFormat[A] =
     new RowFormat[A] {
-      def read(row: CsvRow): CsvValidated[A] =
+      def read(row: CsvRow): Validated[List[CsvError], A] =
         reader.read(row)
 
       def heads: List[CsvPath] =
@@ -33,9 +33,9 @@ object RowFormat {
     new Cartesian[RowFormat] {
       def product[A, B](format1: RowFormat[A], format2: RowFormat[B]): RowFormat[(A, B)] =
         new RowFormat[(A, B)] {
-          def read(row: CsvRow): CsvValidated[(A, B)] = {
-            val a: CsvValidated[A] = format1.read(row)
-            val b: CsvValidated[B] = format2.read(row)
+          def read(row: CsvRow): Validated[List[CsvError], (A, B)] = {
+            val a = format1.read(row)
+            val b = format2.read(row)
             (a |@| b).tupled
           }
 
@@ -54,7 +54,7 @@ object RowFormat {
     new Invariant[RowFormat] {
       def imap[A, B](format: RowFormat[A])(f: A => B)(g: B => A): RowFormat[B] =
         new RowFormat[B] {
-          def read(row: CsvRow): CsvValidated[B] =
+          def read(row: CsvRow): Validated[List[CsvError], B] =
             format.read(row).map(f)
 
           def heads: List[CsvPath] =

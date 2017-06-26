@@ -20,8 +20,8 @@ class ReadSpec extends FreeSpec with Matchers {
           """
 
         Csv.fromString[Test](csv).toList should equal(List(
-          valid(Test("abc", 123, Some(true))),
-          valid(Test("a b", 321, Some(false)))
+          CsvSuccess(2, "abc,true,123", Test("abc", 123, Some(true))),
+          CsvSuccess(3, "a b,false,321", Test("a b", 321, Some(false)))
         ))
       }
 
@@ -33,12 +33,12 @@ class ReadSpec extends FreeSpec with Matchers {
           """
 
         Csv.fromString[Test](csv).toList should equal(List(
-          invalid(Seq(
-            CsvError(2, CsvPath("Int"), "Must be a whole number")
+          CsvFailure(2, ",,", List(
+            CsvError(CsvPath("Int"), "Must be a whole number")
           )),
-          invalid(Seq(
-            CsvError(3, CsvPath("Int"), "Must be a whole number"),
-            CsvError(3, CsvPath("Bool"), "Must be a yes/no value or blank")
+          CsvFailure(3, "abc,abc,abc", List(
+            CsvError(CsvPath("Int"), "Must be a whole number"),
+            CsvError(CsvPath("Bool"), "Must be a yes/no value or blank")
           ))
         ))
       }
@@ -54,9 +54,9 @@ class ReadSpec extends FreeSpec with Matchers {
           """
 
         Csv.fromString[Test](csv).toList should equal(List(
-          valid(Test("x", Map("A" -> Some(1), "B" -> Some(2), "C" -> Some(3)))),
-          valid(Test("y", Map("A" -> None, "B" -> None, "C" -> None))),
-          valid(Test("z", Map("A" -> Some(123), "B" -> None, "C" -> Some(456))))
+          CsvSuccess(2, "x,1,2,3", Test("x", Map("A" -> Some(1), "B" -> Some(2), "C" -> Some(3)))),
+          CsvSuccess(3, "y,,,", Test("y", Map("A" -> None, "B" -> None, "C" -> None))),
+          CsvSuccess(4, "z,123,,456", Test("z", Map("A" -> Some(123), "B" -> None, "C" -> Some(456))))
         ))
       }
 
@@ -66,7 +66,7 @@ class ReadSpec extends FreeSpec with Matchers {
           """
 
         Csv.fromString[Test](csv).toList should equal(List(
-          invalid(List(CsvError(1, CsvPath(""), s"Bad header row: Badness, A, B, C")))
+          CsvFailure(1, "Badness,A,B,C", List(CsvError(CsvPath(""), "Invalid header row")))
         ))
       }
 
@@ -78,12 +78,12 @@ class ReadSpec extends FreeSpec with Matchers {
           """
 
         Csv.fromString[Test](csv).toList should equal(List(
-          invalid(Seq(
-            CsvError(2, CsvPath("A"), "Must be a whole number or blank")
+          CsvFailure(2, "x,badness,2,3", List(
+            CsvError(CsvPath("A"), "Must be a whole number or blank")
           )),
-          invalid(Seq(
-            CsvError(3, CsvPath("B"), "Must be a whole number or blank"),
-            CsvError(3, CsvPath("C"), "Must be a whole number or blank")
+          CsvFailure(3, "z,,badness,alsobadness", List(
+            CsvError(CsvPath("B"), "Must be a whole number or blank"),
+            CsvError(CsvPath("C"), "Must be a whole number or blank")
           ))
         ))
       }
@@ -110,7 +110,7 @@ class ReadSpec extends FreeSpec with Matchers {
         """
 
       Csv.fromString[Test](csv).toList should equal(List(
-        valid(Test("abc", 246, Some(true)))
+        CsvSuccess(2, "abc,123,true", Test("abc", 246, Some(true)))
       ))
     }
 
@@ -121,7 +121,7 @@ class ReadSpec extends FreeSpec with Matchers {
         """
 
       Csv.fromString[Test](csv).toList should equal(List(
-        invalid(Seq(CsvError(2, CsvPath("Int"), "Must be a whole number")))
+        CsvFailure(2, "abc,,true", List(CsvError(CsvPath("Int"), "Must be a whole number")))
       ))
     }
 
@@ -132,7 +132,7 @@ class ReadSpec extends FreeSpec with Matchers {
         """
 
       Csv.fromString[Test](csv).toList should equal(List(
-        Seq(CsvError(2, CsvPath("Int"), "Must be > 0")).invalid
+        CsvFailure(2, "abc,-123,true", List(CsvError(CsvPath("Int"), "Must be > 0")))
       ))
     }
   }
@@ -145,7 +145,7 @@ trait RowReaderFixtures {
     "Str".read[String] |@|
     "Int".read[Int] |@|
     "Bool".read[Option[Boolean]]
-  ) map (Test.apply)
+  ).map(Test)
 }
 
 trait ListReaderFixtures {
@@ -154,9 +154,9 @@ trait ListReaderFixtures {
   implicit val testReader: ListReader[Test] =
     ListReader[Test] {
       case "Key" :: tail =>
-        (("Key".read[String] |@| tail.readMap[Option[Int]]) map (Test.apply)).valid
+        ("Key".read[String] |@| tail.readMap[Option[Int]]).map(Test.apply).valid
 
       case cells =>
-        List(CsvError(1, CsvPath(""), s"Bad header row: ${cells.mkString(", ")}")).invalid
+        List(CsvError(CsvPath(""), s"Invalid header row")).invalid
     }
 }

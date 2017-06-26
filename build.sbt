@@ -1,7 +1,8 @@
-name         := "csvside"
-organization := "io.underscore"
-version      := "0.15.0"
-scalaVersion := "2.11.8"
+name               in ThisBuild := "csvside"
+organization       in ThisBuild := "io.underscore"
+version            in ThisBuild := "0.16.0-SNAPSHOT"
+scalaVersion       in ThisBuild := "2.11.8"
+crossScalaVersions in ThisBuild := Seq("2.11.8")
 
 licenses += ("Apache-2.0", url("http://apache.org/licenses/LICENSE-2.0"))
 
@@ -11,11 +12,14 @@ scalacOptions ++= Seq(
   "-deprecation"
 )
 
+addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3")
+
 libraryDependencies ++= Seq(
   "com.bizo"        %% "mighty-csv" % "0.2",
-  "org.typelevel"   %% "cats"       % "0.4.1",
-  "com.davegurnell" %% "unindent"   % "1.0.0" % "test",
-  "org.scalatest"   %% "scalatest"  % "2.2.4" % "test"
+  "org.typelevel"   %% "cats-core"  % "0.9.0",
+  "com.chuusai"     %% "shapeless"  % "2.3.2",
+  "com.davegurnell" %% "unindent"   % "1.0.0" % Test,
+  "org.scalatest"   %% "scalatest"  % "2.2.4" % Test
 )
 
 pomExtra in Global := {

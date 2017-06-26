@@ -1,16 +1,17 @@
 package csvside
 
-import cats.data.Validated.{valid, invalid}
+import cats.data.Validated
+import cats.syntax.validated._
 
-trait ListReader[A] extends (List[CsvPath] => CsvValidated[RowReader[A]])
+trait ListReader[A] extends (List[CsvPath] => Validated[List[CsvError], RowReader[A]])
 
 object ListReader {
-  def apply[A](func: List[String] => CsvValidated[RowReader[A]]): ListReader[A] =
+  def apply[A](func: List[String] => Validated[List[CsvError], RowReader[A]]): ListReader[A] =
     new ListReader[A] {
-      def apply(csv: List[CsvPath]): CsvValidated[RowReader[A]] =
+      def apply(csv: List[CsvPath]): Validated[List[CsvError], RowReader[A]] =
         func(csv.map(_.text))
     }
 
   implicit def fromRowReader[A](implicit reader: RowReader[A]): ListReader[A] =
-    ListReader[A](_ => valid(reader))
+    ListReader[A](_ => reader.valid)
 }

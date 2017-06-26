@@ -20,21 +20,25 @@ trait Read extends ReadInternals {
     if(!iterator.hasNext) {
       Iterator.empty
     } else {
+      val cells = iterator.next
+
       val cols: List[CsvPath] =
-        iterator.next.map(CsvPath.apply)
+        cells.map(CsvPath.apply)
 
       listReader(cols).fold(
-        errors    => Iterator(invalid(errors)),
+        errors => Iterator(CsvFailure(1, cells.mkString(","), errors)),
         rowReader => new Iterator[CsvValidated[A]] {
           var rowNumber = 1 // incremented before use... effectively starts at 2
           def hasNext = iterator.hasNext
+
           def next = {
             rowNumber = rowNumber + 1
+            val cells = iterator.next
             rowReader
-              .read(CsvRow(rowNumber, (cols zip iterator.next).toMap))
+              .read(CsvRow(rowNumber, (cols zip cells).toMap))
               .fold(
-                errors => invalid(errors),
-                result => valid(result)
+                errors => CsvFailure(rowNumber, cells.mkString(","), errors),
+                result => CsvSuccess(rowNumber, cells.mkString(","), result)
               )
           }
         }

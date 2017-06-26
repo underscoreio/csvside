@@ -26,8 +26,8 @@ class FormatSpec extends FreeSpec with Matchers {
       """
 
     Csv.fromString[Test](csv).toList should equal(List(
-      valid(Test("abc", 123, Some(true))),
-      valid(Test("a b", 321, Some(false)))
+      CsvSuccess(2, "abc,true,123", Test("abc", 123, Some(true))),
+      CsvSuccess(3, "a b,false,321", Test("a b", 321, Some(false)))
     ))
   }
 
@@ -39,12 +39,12 @@ class FormatSpec extends FreeSpec with Matchers {
       """
 
     Csv.fromString[Test](csv).toList should equal(List(
-      invalid(Seq(
-        CsvError(2, CsvPath("Int"), "Must be a whole number")
+      CsvFailure(2, ",,", List(
+        CsvError(CsvPath("Int"), "Must be a whole number")
       )),
-      invalid(Seq(
-        CsvError(3, CsvPath("Int"), "Must be a whole number"),
-        CsvError(3, CsvPath("Bool"), "Must be a yes/no value or blank")
+      CsvFailure(3, "abc,abc,abc", List(
+        CsvError(CsvPath("Int"), "Must be a whole number"),
+        CsvError(CsvPath("Bool"), "Must be a yes/no value or blank")
       ))
     ))
   }
@@ -88,7 +88,7 @@ class FormatSpec extends FreeSpec with Matchers {
         """
 
       Csv.fromString[Test](csv)(validatedTestReader).toList should equal(List(
-        valid(Test("abc", 246, Some(true)))
+        CsvSuccess(2, "abc,123,true", Test("abc", 246, Some(true)))
       ))
     }
 
@@ -99,7 +99,7 @@ class FormatSpec extends FreeSpec with Matchers {
         """
 
       Csv.fromString[Test](csv)(validatedTestReader).toList should equal(List(
-        invalid(Seq(CsvError(2, CsvPath("Int"), "Must be a whole number")))
+        CsvFailure(2, "abc,,true", List(CsvError(CsvPath("Int"), "Must be a whole number")))
       ))
     }
 
@@ -110,7 +110,7 @@ class FormatSpec extends FreeSpec with Matchers {
         """
 
       Csv.fromString[Test](csv)(validatedTestReader).toList should equal(List(
-        invalid(Seq(CsvError(2, CsvPath("Int"), "Must be > 0")))
+        CsvFailure(2, "abc,-123,true", List(CsvError(CsvPath("Int"), "Must be > 0")))
       ))
     }
 

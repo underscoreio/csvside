@@ -35,18 +35,18 @@ object RowWriter {
   implicit val rowWriterCartesian: Cartesian[RowWriter] =
     new Cartesian[RowWriter] {
       def product[A, B](writer1: RowWriter[A], writer2: RowWriter[B]): RowWriter[(A, B)] =
-        RowWriter[(A, B)](writer1.heads ++ writer2.heads) { (value, row) =>
-          val row1 = writer1.write(value._1, row)
-          val row2 = writer2.write(value._2, row)
-          CsvRow(row, row1.values ++ row2.values)
+        RowWriter[(A, B)](writer1.heads ++ writer2.heads) { (value, num) =>
+          val row1 = writer1.write(value._1, num)
+          val row2 = writer2.write(value._2, num)
+          CsvRow(num, row1.values ++ row2.values)
         }
     }
 
   implicit val rowWriterFunctor: Contravariant[RowWriter] =
     new Contravariant[RowWriter] {
       def contramap[A, B](writer: RowWriter[A])(func: B => A): RowWriter[B] =
-        RowWriter[B](writer.heads) { (value, row) =>
-          writer.write(func(value), row)
+        RowWriter[B](writer.heads) { (value, num) =>
+          writer.write(func(value), num)
         }
     }
 }

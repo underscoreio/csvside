@@ -1,7 +1,7 @@
 package csvside
 
 import cats.data.Validated.{valid, invalid}
-import cats.std.all._
+import cats.instances.all._
 import cats.syntax.traverse._
 
 trait RowFormats extends RowReaders with RowWriters {

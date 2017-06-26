@@ -1,7 +1,7 @@
 package csvside
 
 import cats.data.Validated
-// import cats.std.all._
+// import cats.instances.all._
 import cats.syntax.traverse._
 import cats.syntax.validated._
 import scala.collection.mutable
@@ -17,8 +17,8 @@ trait RowReaders extends CellReaders {
     def read[A](implicit reader: CellReader[A]): RowReader[A] =
       RowReader[A](List(head)) { row =>
         row.get(head) match {
-          case Some(cell) => reader(cell.value) leftMap (msg => List(CsvError(row.number, head, msg)))
-          case None       => List(CsvError(row.number, head, s"Column was empty")).invalid
+          case Some(cell) => reader(cell.value) leftMap (msg => List(CsvError(head, msg)))
+          case None       => List(CsvError(head, s"Column was empty")).invalid
         }
       }
 
@@ -48,10 +48,10 @@ trait RowReaders extends CellReaders {
             case Some(cell) =>
               reader(cell.value) match {
                 case Validated.Valid(value) => valid.put(head.text, value)
-                case Validated.Invalid(msg) => invalid += CsvError(row.number, head, msg)
+                case Validated.Invalid(msg) => invalid += CsvError(head, msg)
               }
             case None =>
-              invalid += CsvError(row.number, head, s"Column was empty")
+              invalid += CsvError(head, s"Column was empty")
           }
         }
         if(invalid.isEmpty) {

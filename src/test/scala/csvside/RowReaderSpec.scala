@@ -70,15 +70,15 @@ class RowReaderSpec extends FreeSpec with Matchers {
 
     "invalid" in {
       reader1.read(invalidRow) should equal(valid("abc"))
-      reader2.read(invalidRow) should equal(invalid(List(CsvError(2, CsvPath("Column 2"), "Must be a whole number"))))
-      reader3.read(invalidRow) should equal(invalid(List(CsvError(2, CsvPath("Column 3"), "Must be a yes/no value"))))
-      reader4.read(invalidRow) should equal(invalid(List(CsvError(2, CsvPath("Column 4"), "Must be a number or blank"))))
+      reader2.read(invalidRow) should equal(invalid(List(CsvError(CsvPath("Column 2"), "Must be a whole number"))))
+      reader3.read(invalidRow) should equal(invalid(List(CsvError(CsvPath("Column 3"), "Must be a yes/no value"))))
+      reader4.read(invalidRow) should equal(invalid(List(CsvError(CsvPath("Column 4"), "Must be a number or blank"))))
     }
 
     "empty" in {
       reader1.read(emptyRow) should equal(valid(""))
-      reader2.read(emptyRow) should equal(invalid(List(CsvError(3, CsvPath("Column 2"), "Must be a whole number"))))
-      reader3.read(emptyRow) should equal(invalid(List(CsvError(3, CsvPath("Column 3"), "Must be a yes/no value"))))
+      reader2.read(emptyRow) should equal(invalid(List(CsvError(CsvPath("Column 2"), "Must be a whole number"))))
+      reader3.read(emptyRow) should equal(invalid(List(CsvError(CsvPath("Column 3"), "Must be a yes/no value"))))
       reader4.read(emptyRow) should equal(valid(None))
     }
   }
@@ -95,16 +95,16 @@ class RowReaderSpec extends FreeSpec with Matchers {
 
     "invalid" in {
       testReader.read(invalidRow) should equal(invalid(List(
-        CsvError(2, CsvPath("Column 2"), "Must be a whole number"),
-        CsvError(2, CsvPath("Column 3"), "Must be a yes/no value"),
-        CsvError(2, CsvPath("Column 4"), "Must be a number or blank")
+        CsvError(CsvPath("Column 2"), "Must be a whole number"),
+        CsvError(CsvPath("Column 3"), "Must be a yes/no value"),
+        CsvError(CsvPath("Column 4"), "Must be a number or blank")
       )))
     }
 
     "empty" in {
       testReader.read(emptyRow) should equal(invalid(List(
-        CsvError(3, CsvPath("Column 2"), "Must be a whole number"),
-        CsvError(3, CsvPath("Column 3"), "Must be a yes/no value")
+        CsvError(CsvPath("Column 2"), "Must be a whole number"),
+        CsvError(CsvPath("Column 3"), "Must be a yes/no value")
       )))
     }
   }
