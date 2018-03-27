@@ -1,7 +1,6 @@
 package csvside
 
-import au.com.bytecode.opencsv.{CSVWriter => OpenCsvWriter}
-import com.bizo.mighty.csv.{CSVDictWriter => MightyCsvWriter}
+import au.com.bytecode.opencsv.{CSVWriter => OpenCSVWriter}
 import java.io.{File, Writer, FileWriter, StringWriter}
 import cats.data.Validated.{valid, invalid}
 
@@ -22,7 +21,7 @@ trait Write {
   def toWriter[A](items: Seq[A], out: Writer)(implicit rowWriter: RowWriter[A]): Unit = {
     val heads  = rowWriter.heads
     val rows   = items.zipWithIndex map rowWriter.tupledWrite
-    val mighty = MightyCsvWriter(new OpenCsvWriter(out), heads map (_.text))
+    val mighty = new Mighty.CSVDictWriter(new OpenCSVWriter(out), heads map (_.text))
     mighty.writeHeader
     rows.foreach { row =>
       mighty.write(row.values.map { case (head, value) => (head.text) -> value })

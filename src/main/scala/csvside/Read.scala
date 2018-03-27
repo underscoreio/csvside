@@ -1,7 +1,6 @@
 package csvside
 
-import com.bizo.mighty.csv.{CSVReader => MightyCsvReader}
-import au.com.bytecode.opencsv.{CSVReader => OpenCsvReader}
+import au.com.bytecode.opencsv.{CSVReader => OpenCSVReader}
 import java.io.{File, Reader, FileReader, StringReader}
 import scala.collection.JavaConversions._
 import cats.data.Validated.{valid, invalid}
@@ -57,5 +56,6 @@ trait ReadInternals {
     readerIterator(new StringReader(in))
 
   def readerIterator(reader: Reader): Iterator[List[String]] =
-    MightyCsvReader(new OpenCsvReader(reader)).map(_.toList)
+    new Mighty.CSVReader(new OpenCSVReader(reader)).map(_.toList)
+
 }
