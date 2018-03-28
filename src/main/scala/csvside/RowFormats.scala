@@ -1,9 +1,5 @@
 package csvside
 
-import cats.data.Validated.{valid, invalid}
-import cats.instances.all._
-import cats.syntax.traverse._
-
 trait RowFormats extends RowReaders with RowWriters {
   implicit class CsvPathFormatOps(head: CsvPath) {
     def csv[A](implicit reader: CellReader[A], writer: CellWriter[A]): RowFormat[A] =

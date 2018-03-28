@@ -1,12 +1,9 @@
 package csvside
 
-import scala.language.higherKinds
-import cats.Cartesian
+import cats.Semigroupal
 import cats.data.Validated
-import cats.functor.Invariant
+import cats.Invariant
 import cats.instances.list._
-import cats.syntax.cartesian._
-import cats.syntax.validated._
 
 trait RowFormat[A] extends RowReader[A] with RowWriter[A] {
   def ivalidate[B <: A](forward: A => Validated[String, B]): RowFormat[B] =
@@ -29,14 +26,15 @@ object RowFormat {
         writer.write(value, row)
     }
 
-  implicit val rowFormatCartesian: Cartesian[RowFormat] =
-    new Cartesian[RowFormat] {
+  implicit val rowFormatCartesian: Semigroupal[RowFormat] =
+    new Semigroupal[RowFormat] {
       def product[A, B](format1: RowFormat[A], format2: RowFormat[B]): RowFormat[(A, B)] =
         new RowFormat[(A, B)] {
           def read(row: CsvRow): Validated[List[CsvError], (A, B)] = {
             val a = format1.read(row)
             val b = format2.read(row)
-            (a |@| b).tupled
+            type AllErrorsOr[A] = Validated[List[CsvError], A]
+            Semigroupal[AllErrorsOr].product(a, b)
           }
 
           def heads: List[CsvPath] =

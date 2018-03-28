@@ -2,8 +2,6 @@ package csvside
 
 import au.com.bytecode.opencsv.{CSVReader => OpenCSVReader}
 import java.io.{File, Reader, FileReader, StringReader}
-import scala.collection.JavaConversions._
-import cats.data.Validated.{valid, invalid}
 
 trait Read extends ReadInternals {
   def fromFile[A](file: File)(implicit listReader: ListReader[A]): Iterator[CsvValidated[A]] =

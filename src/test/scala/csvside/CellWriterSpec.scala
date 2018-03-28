@@ -1,9 +1,5 @@
 package csvside
 
-import cats.data.Validated
-import cats.data.Validated.{valid, invalid}
-import cats.instances.all._
-
 import org.scalatest._
 
 class CellWriterSpec extends FreeSpec with Matchers with CellWriters {

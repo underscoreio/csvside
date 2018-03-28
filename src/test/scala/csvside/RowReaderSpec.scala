@@ -2,7 +2,7 @@ package csvside
 
 import cats.data.Validated
 import cats.data.Validated.{valid, invalid}
-import cats.syntax.cartesian._
+import cats.implicits._
 
 import org.scalatest._
 
@@ -36,11 +36,11 @@ class RowReaderSpec extends FreeSpec with Matchers {
   case class Test(a: String, b: Int, c: Boolean, d: Option[Double])
 
   val testReader: RowReader[Test] = (
-    "Column 1".read[String]  |@|
-    "Column 2".read[Int]     |@|
-    "Column 3".read[Boolean] |@|
+    "Column 1".read[String],
+    "Column 2".read[Int],
+    "Column 3".read[Boolean],
     "Column 4".read[Option[Double]]
-  ) map (Test.apply)
+  ) mapN (Test.apply)
 
   "readLineNumber" - {
     val data   = new Exception("WOO!")

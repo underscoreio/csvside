@@ -1,7 +1,5 @@
 package csvside
 
-import scala.language.implicitConversions
-
 case class CsvPath(parts: Seq[String]) {
   def prefix(str: String): CsvPath =
     CsvPath(str +: parts)

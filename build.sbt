@@ -9,16 +9,16 @@ licenses += ("Apache-2.0", url("http://apache.org/licenses/LICENSE-2.0"))
 scalacOptions ++= Seq(
   "-feature",
   "-unchecked",
-  "-deprecation"
+  "-deprecation",
 )
 
-addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3")
+addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.6")
 
 
 libraryDependencies ++= Seq(
   "net.sf.opencsv"   % "opencsv"    % "2.3",
-  "org.typelevel"   %% "cats-core"  % "0.9.0",
-  "com.chuusai"     %% "shapeless"  % "2.3.2",
+  "org.typelevel"   %% "cats-core"  % "1.1.0",
+  "com.chuusai"     %% "shapeless"  % "2.3.3",
   "com.davegurnell" %% "unindent"   % "1.1.0" % Test,
   "org.scalatest"   %% "scalatest"  % "3.0.5" % Test
 )

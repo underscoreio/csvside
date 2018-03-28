@@ -1,6 +1,5 @@
 package csvside
 
-import cats.data.Validated
 import cats.syntax.validated._
 import scala.util.matching.Regex
 

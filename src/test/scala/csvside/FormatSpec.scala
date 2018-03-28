@@ -1,11 +1,10 @@
 package csvside
 
 import cats.data.Validated
-import cats.data.Validated.{valid, invalid}
-import cats.syntax.cartesian._
-import cats.syntax.validated._
+import cats.data.Validated.{Valid, Invalid}
+import cats.implicits._
 
-import org.scalatest._
+import org.scalatest.{FreeSpec,Matchers}
 
 import unindent._
 
@@ -13,10 +12,10 @@ class FormatSpec extends FreeSpec with Matchers {
   case class Test(a: String, b: Int, c: Option[Boolean])
 
   implicit val testFormat: RowFormat[Test] = (
-    "Str".csv[String] |@|
-    "Int".csv[Int]    |@|
+    "Str".csv[String],
+    "Int".csv[Int],
     "Bool".csv[Option[Boolean]]
-  ).imap(Test.apply)(unlift(Test.unapply))
+  ).imapN(Test.apply)(unlift(Test.unapply))
 
   "valid read" in {
     val csv = i"""
@@ -67,16 +66,16 @@ class FormatSpec extends FreeSpec with Matchers {
 
   "validate" - {
     def validateAndDouble(n: Int): Validated[String, Int] =
-      if(n > 0) (n * 2).valid else "Must be > 0".invalid
+      if(n > 0) Valid(n * 2) else Invalid("Must be > 0")
 
     def halve(n: Int): Int =
       n / 2
 
     val validatedTestFormat: RowFormat[Test] = (
-      "Str".csv[String] |@|
-      "Int".csv[Int].ivalidate(validateAndDouble, halve) |@|
+      "Str".csv[String],
+      "Int".csv[Int].ivalidate(validateAndDouble, halve),
       "Bool".csv[Option[Boolean]]
-    ).imap(Test.apply)(unlift(Test.unapply))
+    ).imapN(Test.apply)(unlift(Test.unapply))
 
     val validatedTestReader =
       ListReader.fromRowReader(validatedTestFormat)

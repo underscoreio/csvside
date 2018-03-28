@@ -1,8 +1,7 @@
 package csvside
 
-import scala.language.higherKinds
-import cats.Cartesian
-import cats.functor.Contravariant
+import cats.Semigroupal
+import cats.Contravariant
 
 trait RowWriter[-A] {
   def heads: List[CsvPath]
@@ -32,8 +31,8 @@ object RowWriter {
     }
   }
 
-  implicit val rowWriterCartesian: Cartesian[RowWriter] =
-    new Cartesian[RowWriter] {
+  implicit val rowWriterCartesian: Semigroupal[RowWriter] =
+    new Semigroupal[RowWriter] {
       def product[A, B](writer1: RowWriter[A], writer2: RowWriter[B]): RowWriter[(A, B)] =
         RowWriter[(A, B)](writer1.heads ++ writer2.heads) { (value, num) =>
           val row1 = writer1.write(value._1, num)

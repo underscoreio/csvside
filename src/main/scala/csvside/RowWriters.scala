@@ -1,9 +1,5 @@
 package csvside
 
-import cats.data.Validated.{valid, invalid}
-import cats.instances.all._
-import cats.syntax.traverse._
-
 trait RowWriters extends CellWriters {
   implicit class CsvPathWriterOps(head: CsvPath) {
     def writeConstant[A](value: A)(implicit writer: CellWriter[A]) =
