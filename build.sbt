@@ -14,7 +14,6 @@ scalacOptions ++= Seq(
 
 addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3")
 
-
 libraryDependencies ++= Seq(
   "net.sf.opencsv"   % "opencsv"    % "2.3",
   "org.typelevel"   %% "cats-core"  % "0.9.0",
@@ -22,6 +21,8 @@ libraryDependencies ++= Seq(
   "com.davegurnell" %% "unindent"   % "1.1.0" % Test,
   "org.scalatest"   %% "scalatest"  % "3.0.5" % Test
 )
+
+publishTo := sonatypePublishTo.value
 
 pomExtra in Global := {
   <url>https://github.com/underscoreio/csvside</url>
