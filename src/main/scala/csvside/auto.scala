@@ -1,8 +1,6 @@
 package csvside
 
-import cats.data.Validated
-import cats.instances.list._
-import cats.syntax.cartesian._
+import cats.syntax.apply._
 import cats.syntax.validated._
 import shapeless._
 import shapeless.labelled._
@@ -19,7 +17,7 @@ object auto {
   ): RowReader[FieldType[K, H] :: T] = {
     val path = CsvPath(List(witness.value.name))
     val hReader1 = path.read(hReader.value.map(h => field[K](h)))
-    (hReader1 |@| tReader).map(_ :: _)
+    (hReader1, tReader).mapN(_ :: _)
   }
 
   implicit def genericRowReader[A, R](

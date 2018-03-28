@@ -1,8 +1,5 @@
 package csvside
 
-import cats.data.Validated
-import cats.data.Validated.{invalid, valid}
-
 trait CellWriters {
   implicit val stringWriter: CellWriter[String] =
     CellWriter[String](identity)

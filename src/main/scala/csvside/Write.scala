@@ -2,7 +2,6 @@ package csvside
 
 import au.com.bytecode.opencsv.{CSVWriter => OpenCSVWriter}
 import java.io.{File, Writer, FileWriter, StringWriter}
-import cats.data.Validated.{valid, invalid}
 
 trait Write {
   def toString[A](items: Seq[A])(implicit rowWriter: RowWriter[A]): String = {

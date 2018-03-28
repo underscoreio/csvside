@@ -1,9 +1,8 @@
 package csvside
 
 import cats.data.Validated
-import cats.data.Validated.{valid, invalid}
-import cats.syntax.cartesian._
-import cats.syntax.validated._
+import cats.data.Validated.{Valid, Invalid}
+import cats.implicits._
 
 import org.scalatest._
 
@@ -92,15 +91,15 @@ class ReadSpec extends FreeSpec with Matchers {
 
   "validate" - {
     def validateAndDouble(n: Int): Validated[String, Int] =
-      if(n > 0) (n * 2).valid else "Must be > 0".invalid
+      if(n > 0) Valid(n * 2)else Invalid("Must be > 0")
 
     case class Test(a: String, b: Int, c: Option[Boolean])
 
     implicit val testReader: RowReader[Test] = (
-      "Str".read[String] |@|
-      "Int".read[Int].validate(validateAndDouble) |@|
+      "Str".read[String],
+      "Int".read[Int].validate(validateAndDouble),
       "Bool".read[Option[Boolean]]
-    ) map (Test.apply)
+    ).mapN(Test.apply)
 
     "should transform valid values" in {
 
@@ -142,10 +141,10 @@ trait RowReaderFixtures {
   case class Test(a: String, b: Int, c: Option[Boolean])
 
   implicit val testReader: RowReader[Test] = (
-    "Str".read[String] |@|
-    "Int".read[Int] |@|
+    "Str".read[String],
+    "Int".read[Int],
     "Bool".read[Option[Boolean]]
-  ).map(Test)
+  ).mapN(Test)
 }
 
 trait ListReaderFixtures {
@@ -154,9 +153,9 @@ trait ListReaderFixtures {
   implicit val testReader: ListReader[Test] =
     ListReader[Test] {
       case "Key" :: tail =>
-        ("Key".read[String] |@| tail.readMap[Option[Int]]).map(Test.apply).valid
+        Valid(("Key".read[String], tail.readMap[Option[Int]]).mapN(Test.apply))
 
       case cells =>
-        List(CsvError(CsvPath(""), s"Invalid header row")).invalid
+        Invalid(List(CsvError(CsvPath(""), s"Invalid header row")))
     }
 }

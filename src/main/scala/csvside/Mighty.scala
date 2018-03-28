@@ -2,7 +2,6 @@ package csvside
 
 import au.com.bytecode.opencsv.{ CSVReader => OpenCSVReader }
 import au.com.bytecode.opencsv.{ CSVWriter => OpenCSVWriter }
-import java.io.{ FileReader, InputStreamReader, FileInputStream }
 
 /*
  * This code from Apache 2.0 Licensed mighty-csv

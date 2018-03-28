@@ -1,8 +1,6 @@
 package csvside
 
 import cats.data.Validated
-// import cats.instances.all._
-import cats.syntax.traverse._
 import cats.syntax.validated._
 import scala.collection.mutable
 
