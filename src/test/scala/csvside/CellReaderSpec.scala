@@ -3,8 +3,10 @@ package csvside
 import cats.data.Validated.{valid, invalid}
 
 import org.scalatest._
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 
-class CellReaderSpec extends FreeSpec with Matchers with CellReaders {
+class CellReaderSpec extends AnyFreeSpec with Matchers with CellReaders {
   "stringReader" - {
     val reader = implicitly[CellReader[String]]
 

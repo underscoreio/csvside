@@ -22,9 +22,7 @@ object Mighty {
       this.map { fn }
     }
 
-    def close() {
-      reader.close()
-    }
+    def close(): Unit = reader.close()
   }
 
 
@@ -55,9 +53,7 @@ object Mighty {
     }
 
     /** closes reader */
-    def close() {
-      reader.close()
-    }
+    def close(): Unit = reader.close()
   }
 
   /** 
@@ -68,10 +64,10 @@ object Mighty {
   class CSVDictWriter(writer: OpenCSVWriter, headers: Seq[String]) {
     
     /** writes the header */
-    def writeHeader() { writer.writeNext(headers.toArray) }
+    def writeHeader(): Unit = writer.writeNext(headers.toArray)
     
     /** writes a row */
-    def write(row: Map[String, String]) { 
+    def write(row: Map[String, String]): Unit = { 
       val rowData: Array[String] = headers.map { col: String =>
         row.get(col) getOrElse sys.error("Column (%s) not found in row [%s]".format(col, row.toString))
       }.toArray
@@ -79,9 +75,11 @@ object Mighty {
       writer.writeNext(rowData)
     }
 
-    def close() { writer.close() }
+    def close(): Unit = writer.close()
 
-    def flush() { writer.synchronized { writer.flush() } }
+    def flush(): Unit = writer.synchronized { 
+      writer.flush() 
+    }
   }
 
 }

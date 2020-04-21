@@ -19,6 +19,9 @@ project/plugins/project/
 .scala_dependencies
 .worksheet
 
+# Metals
+plugins/metals.sbt
+
 # ENSIME specific
 .ensime
 .ensime_cache

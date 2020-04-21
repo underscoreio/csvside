@@ -2,11 +2,11 @@
 
 CSV readers and combinators for Scala. Made with Cats.
 
-Copyright 2015 Richard Dallaway and Dave Gurnell. Licensed [Apache 2][license].
+Copyright 2015-2020 Richard Dallaway and Dave Gurnell. Licensed [Apache 2][license].
 
 [![Build Status](https://travis-ci.org/underscoreio/csvside.svg?branch=develop)](https://travis-ci.org/underscoreio/csvside)
 [![Coverage status](https://img.shields.io/codecov/c/github/underscoreio/csvside/develop.svg)](https://codecov.io/github/underscoreio/csvside)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.underscore/csvside_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.underscore/csvside_2.12)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.underscore/csvside_2.13/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.underscore/csvside_2.12)
 
 ## Getting Started
 
@@ -15,6 +15,8 @@ Grab the code by adding the following to your `build.sbt`:
 ~~~ scala
 libraryDependencies += "io.underscore" %% "csvside" % "<<VERSION>>"
 ~~~
+
+For Scala 2.11 and 2.12, use version 1.0.0.
 
 ## Synopsis
 
