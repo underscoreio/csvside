@@ -5,8 +5,10 @@ import cats.data.Validated.{valid, invalid}
 import cats.implicits._
 
 import org.scalatest._
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 
-class RowReaderSpec extends FreeSpec with Matchers {
+class RowReaderSpec extends AnyFreeSpec with Matchers {
   val validRow = CsvRow(1, Map(
     CsvPath("Column 1") -> "abc",
     CsvPath("Column 2") -> "123",

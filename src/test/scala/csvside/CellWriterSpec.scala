@@ -1,8 +1,10 @@
 package csvside
 
 import org.scalatest._
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 
-class CellWriterSpec extends FreeSpec with Matchers with CellWriters {
+class CellWriterSpec extends AnyFreeSpec with Matchers with CellWriters {
   "stringWriter" in {
     val writer = implicitly[CellWriter[String]]
     writer("Hi") should equal("Hi")

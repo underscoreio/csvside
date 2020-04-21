@@ -5,8 +5,10 @@ import cats.implicits._
 import org.scalatest._
 
 import unindent._
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 
-class WriteSpec extends FreeSpec with Matchers {
+class WriteSpec extends AnyFreeSpec with Matchers {
   case class Test(a: String, b: Int, c: Option[Boolean])
 
   implicit val testWriter: RowWriter[Test] = (

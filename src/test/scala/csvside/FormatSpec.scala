@@ -4,11 +4,12 @@ import cats.data.Validated
 import cats.data.Validated.{Valid, Invalid}
 import cats.implicits._
 
-import org.scalatest.{FreeSpec,Matchers}
 
 import unindent._
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 
-class FormatSpec extends FreeSpec with Matchers {
+class FormatSpec extends AnyFreeSpec with Matchers {
   case class Test(a: String, b: Int, c: Option[Boolean])
 
   implicit val testFormat: RowFormat[Test] = (

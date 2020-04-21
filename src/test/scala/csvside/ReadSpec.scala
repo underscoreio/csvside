@@ -7,8 +7,10 @@ import cats.implicits._
 import org.scalatest._
 
 import unindent._
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 
-class ReadSpec extends FreeSpec with Matchers {
+class ReadSpec extends AnyFreeSpec with Matchers {
   "Csv.fromString" - {
     "using RowReader" - {
       "valid" in new RowReaderFixtures {
