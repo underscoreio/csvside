@@ -13,11 +13,11 @@ trait Read extends ReadInternals {
   def fromString[A](data: String)(implicit listReader: ListReader[A]): Iterator[CsvValidated[A]] =
     fromIterator(stringIterator(data))
 
-  def fromIterator[A](iterator: Iterator[List[String]])(implicit listReader: ListReader[A]): Iterator[CsvValidated[A]] = {
-    if(!iterator.hasNext) {
+  def fromIterator[A](sourceIterator: Iterator[List[String]])(implicit listReader: ListReader[A]): Iterator[CsvValidated[A]] = {
+    if(!sourceIterator.hasNext) {
       Iterator.empty
     } else {
-      val cells = iterator.next
+      val cells: List[String] = sourceIterator.next
 
       val cols: List[CsvPath] =
         cells.map(CsvPath.apply)
@@ -26,11 +26,11 @@ trait Read extends ReadInternals {
         errors => Iterator(CsvFailure(1, cells.mkString(","), errors)),
         rowReader => new Iterator[CsvValidated[A]] {
           var rowNumber = 1 // incremented before use... effectively starts at 2
-          def hasNext = iterator.hasNext
+          def hasNext = sourceIterator.hasNext
 
-          def next = {
+          def next: CsvValidated[A] = {
             rowNumber = rowNumber + 1
-            val cells = iterator.next
+            val cells = sourceIterator.next
             rowReader
               .read(CsvRow(rowNumber, (cols zip cells).toMap))
               .fold(
